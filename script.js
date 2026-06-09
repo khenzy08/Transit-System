@@ -1,3 +1,15 @@
+// Create the map
+var map = L.map('map').setView([14.5764, 121.1329], 13);
+
+// Add OpenStreetMap tiles
+L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+        attribution: '© OpenStreetMap'
+    }
+).addTo(map);
+
+// Route function
 function findRoute() {
 
     const start =
