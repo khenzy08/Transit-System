@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Transit Route Optimizer - Philippines</title>
+
+    <!-- Leaflet -->
+    <link rel="stylesheet"
+        href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <!-- Leaflet Routing Machine -->
+    <link rel="stylesheet"
+        href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="logo-section">
+                <h2>🗺️ Transit Route Optimizer</h2>
+                <p class="subtitle">
+                    Nationwide Road Routing for the Philippines
+                </p>
+            </div>
+
+            <!-- SEARCH SECTION -->
+            <div class="search-section">
+
+                <label for="fromInput">
+                    <strong>From</strong>
+                </label>
+
+                <div class="autocomplete-container">
+                    <input
+                        type="text"
+                        id="fromInput"
+                        placeholder="Enter starting location..."
+                        autocomplete="off">
+
+                    <div
+                        id="fromSuggestions"
+                        class="suggestions-box">
+                    </div>
+                </div>
+
+                <label for="toInput">
+                    <strong>To</strong>
+                </label>
+
+                <div class="autocomplete-container">
+                    <input
+                        type="text"
+                        id="toInput"
+                        placeholder="Enter destination..."
+                        autocomplete="off">
+
+                    <div
+                        id="toSuggestions"
+                        class="suggestions-box">
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- VEHICLE SELECTION -->
+            <div class="section-title">
+                Vehicle Type
+            </div>
+
+            <div class="vehicle-panel">
+
+                <div
+                    class="vehicle-card active"
+                    data-vehicle="car">
+
+                    <div class="vehicle-icon">
+                        🚗
+                    </div>
+
+                    <div>
+                        <h4>Car</h4>
+                        <p>Standard Driving</p>
+                    </div>
+
+                </div>
+
+                <div
+                    class="vehicle-card"
+                    data-vehicle="motorcycle">
+
+                    <div class="vehicle-icon">
+                        🛵
+                    </div>
+
+                    <div>
+                        <h4>Motorcycle</h4>
+                        <p>Two-Wheel Travel</p>
+                    </div>
+
+                </div>
+
+                <div
+                    class="vehicle-card"
+                    data-vehicle="bicycle">
+
+                    <div class="vehicle-icon">
+                        🚴‍♂️
+                    </div>
+
+                    <div>
+                        <h4>Bicycle</h4>
+                        <p>Eco-friendly Ride</p>
+                    </div>
+
+                </div>
+
+                <div
+                    class="vehicle-card"
+                    data-vehicle="walking">
+
+                    <div class="vehicle-icon">
+                        🚶‍♀️
+                    </div>
+
+                    <div>
+                        <h4>Walking</h4>
+                        <p>Pedestrian Friendly</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ROUTE OPTIONS -->
+            <div class="section-title">
+                Route Options
+            </div>
+
+            <div class="route-panel">
+
+                <div
+                    class="route-card active"
+                    data-route="fastest">
+
+                    <div class="route-icon">
+                        ⚡
+                    </div>
+
+                    <div>
+                        <h4>Fastest Route</h4>
+                        <p>Optimized Travel Time</p>
+                    </div>
+
+                </div>
+
+                <div
+                    class="route-card"
+                    data-route="cheapest">
+
+                    <div class="route-icon">
+                        💰
+                    </div>
+
+                    <div>
+                        <h4>Cheapest Route</h4>
+                        <p>Fuel Efficient</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ROUTE INFO -->
+            <div class="route-info">
+
+                <div class="info-card">
+                    <span>Distance</span>
+                    <strong id="distanceText">
+                        --
+                    </strong>
+                </div>
+
+                <div class="info-card">
+                    <span>Estimated Time</span>
+                    <strong id="timeText">
+                        --
+                    </strong>
+                </div>
+
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="button-group">
+
+                <button
+                    id="findRouteBtn"
+                    class="primary-btn">
+
+                    Find Route
+
+                </button>
+
+                <button
+                    id="resetBtn"
+                    class="secondary-btn">
+
+                    Reset Route
+
+                </button>
+
+            </div>
+
+        </aside>
+
+        <!-- MAP -->
+        <main id="map"></main>
+
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.min.js"></script>
+    <script src="script.js"></script>
+
+</body>
+
+</html>
