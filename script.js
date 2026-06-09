@@ -1,6 +1,3 @@
-const ORS_KEY = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjhlNDk3NjY2ZmEyNTRkZjQ5ODI4ZDAxNGRhZTk0YTNkIiwiaCI6Im11cm11cjY0In0=";
-
-// MAP
 const map = L.map('map').setView([14.58,121.13],13);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
@@ -8,67 +5,82 @@ attribution:'© OSM'
 }).addTo(map);
 
 // STATE
-let origin=null,destination=null,pickup=null;
-let originMarker=null,destinationMarker=null,pickupMarkers=[];
-let routeLayer=null;
+let origin=null;
+let destination=null;
+let pickup=null;
+
+let originMarker=null;
+let destinationMarker=null;
+let pickupMarkers=[];
+let routeLine=null;
 let routes=[];
 
 // ICONS
-const startIcon=L.icon({
+const startIcon = L.icon({
 iconUrl:'https://cdn-icons-png.flaticon.com/512/684/684908.png',
 iconSize:[35,35]
 });
 
-const endIcon=L.icon({
+const endIcon = L.icon({
 iconUrl:'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
 iconSize:[35,35]
 });
 
-// GEO SEARCH (REAL + PHILIPPINES)
+// ========================
+// GEO SEARCH (FIXED)
+// ========================
 async function search(q){
 if(q.length<2) return [];
 
-const res=await fetch(
-`https://api.openrouteservice.org/geocode/search?api_key=${ORS_KEY}&text=${encodeURIComponent(q)}, Philippines&size=5`
+const res = await fetch(
+`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q + ", Philippines")}&limit=5`
 );
 
-const data=await res.json();
-return data.features || [];
+return await res.json();
 }
 
+// ========================
 // SHOW RESULTS
-function showResults(data,containerId,type){
-const container=document.getElementById(containerId);
-container.innerHTML="";
+// ========================
+function showResults(data,boxId,type){
+const box=document.getElementById(boxId);
+box.innerHTML="";
 
 data.forEach(item=>{
 
-const name=item.properties.label;
-
 const div=document.createElement("div");
 div.className="result";
-div.innerText=name;
+div.innerText=item.display_name;
 
-div.onclick=()=>select(item,type);
+div.onclick=()=>{
+selectLocation(item,type);
+box.innerHTML="";
+};
 
-container.appendChild(div);
+box.appendChild(div);
 
 });
 }
 
+// ========================
 // SELECT LOCATION
-function select(item,type){
+// ========================
+function selectLocation(item,type){
 
-const [lon,lat]=item.geometry.coordinates;
+const lat=parseFloat(item.lat);
+const lon=parseFloat(item.lon);
 
 map.setView([lat,lon],15);
 
 if(type==="origin"){
+
 origin={lat,lon};
 generatePickup(lat,lon);
+
 }
 
 if(type==="destination"){
+
 destination={lat,lon};
 
 if(destinationMarker) map.removeLayer(destinationMarker);
@@ -76,40 +88,49 @@ if(destinationMarker) map.removeLayer(destinationMarker);
 destinationMarker=L.marker([lat,lon],{icon:endIcon})
 .addTo(map)
 .bindPopup("Destination");
-}
-
-if(origin&&destination){
-getRoutes();
-drawRoute(0);
-}
 
 }
 
-// PICKUP POINTS
+if(origin && destination){
+getRoute();
+drawRoute();
+}
+
+}
+
+// ========================
+// PICKUP POINTS (ANGKAS STYLE)
+// ========================
 function generatePickup(lat,lon){
 
 pickupMarkers.forEach(m=>map.removeLayer(m));
 pickupMarkers=[];
 
-const opts=[
+pickup=null;
+
+const options=[
 {name:"Main Entrance",lat:lat+0.0005,lon},
-{name:"Roadside",lat,lon:lon+0.0005},
+{name:"Roadside Pickup",lat,lon:lon+0.0005},
 {name:"Terminal",lat:lat-0.0005,lon:lon-0.0005}
 ];
 
-const box=document.getElementById("pickupOptions");
+const box=document.getElementById("pickupBox");
 box.innerHTML="";
 
-opts.forEach(o=>{
+options.forEach(o=>{
 
-const m=L.marker([o.lat,o.lon]).addTo(map).bindPopup(o.name);
-pickupMarkers.push(m);
+const marker=L.marker([o.lat,o.lon])
+.addTo(map)
+.bindPopup(o.name);
+
+pickupMarkers.push(marker);
 
 const div=document.createElement("div");
 div.className="pickup";
 div.innerText=o.name;
 
 div.onclick=()=>{
+
 pickup=o;
 
 if(originMarker) map.removeLayer(originMarker);
@@ -118,8 +139,9 @@ originMarker=L.marker([o.lat,o.lon],{icon:startIcon})
 .addTo(map)
 .bindPopup(o.name);
 
-getRoutes();
-drawRoute(0);
+getRoute();
+drawRoute();
+
 };
 
 box.appendChild(div);
@@ -128,78 +150,78 @@ box.appendChild(div);
 
 }
 
-// REAL ROUTES (OSRM via OpenRouteService)
-async function getRoutes(){
+// ========================
+// REAL ROUTING (OSRM)
+// ========================
+async function getRoute(){
 
 const start = pickup || origin;
 
-const body = {
-coordinates:[
-[start.lon,start.lat],
-[destination.lon,destination.lat]
-]
-};
+const url =
+`https://router.project-osrm.org/route/v1/driving/`+
+`${start.lon},${start.lat};${destination.lon},${destination.lat}`+
+`?overview=full&geometries=geojson`;
 
-const res=await fetch(
-"https://api.openrouteservice.org/v2/directions/driving-car/geojson",
-{
-method:"POST",
-headers:{
-"Authorization":ORS_KEY,
-"Content-Type":"application/json"
-},
-body:JSON.stringify(body)
-}
-);
+const res = await fetch(url);
+const data = await res.json();
 
-const data=await res.json();
+const coords = data.routes[0].geometry.coordinates;
 
-// simulate 3 alternatives
-routes=[
-data.features[0].geometry.coordinates.map(c=>[c[1],c[0]]),
-data.features[0].geometry.coordinates.map(c=>[c[1],c[0]]).reverse(),
-data.features[0].geometry.coordinates.map(c=>[c[1],c[0]]).map(p=>[p[0]+0.001,p[1]])
+routes = [
+
+coords.map(c=>[c[1],c[0]]),
+coords.map(c=>[c[1],c[0]]).reverse(),
+coords.map(c=>[c[1],c[0]]).map(p=>[p[0]+0.001,p[1]])
 ];
 
 }
 
+// ========================
 // DRAW ROUTE
-function drawRoute(i){
+// ========================
+function drawRoute(i=0){
 
-if(!routes.length) return;
-
-if(routeLayer) map.removeLayer(routeLayer);
+if(routeLine) map.removeLayer(routeLine);
 
 const colors=["#00a884","#2196f3","#ff9800"];
 
-routeLayer=L.polyline(routes[i],{
+routeLine=L.polyline(routes[i],{
 color:colors[i],
 weight:6
 }).addTo(map);
 
-map.fitBounds(routeLayer.getBounds(),{padding:[30,30]});
+map.fitBounds(routeLine.getBounds(),{padding:[30,30]});
 
 }
 
-// INPUTS
-document.getElementById("originInput")
-.addEventListener("input",async function(){
+// ========================
+// INPUT EVENTS
+// ========================
+document.getElementById("originInput").oninput=async function(){
 const data=await search(this.value);
 showResults(data,"originResults","origin");
-});
+};
 
-document.getElementById("destinationInput")
-.addEventListener("input",async function(){
+document.getElementById("destinationInput").oninput=async function(){
 const data=await search(this.value);
 showResults(data,"destinationResults","destination");
-});
+};
 
-// ROUTES SWITCH
+// ========================
+// ROUTE SWITCH
+// ========================
+document.querySelectorAll(".route-card").forEach((c,i)=>{
+c.onclick=()=>{
 document.querySelectorAll(".route-card")
-.forEach((c,i)=>{
-c.onclick=()=>drawRoute(i);
+.forEach(x=>x.classList.remove("active"));
+c.classList.add("active");
+drawRoute(i);
+};
 });
 
+// ========================
 // RESET
-document.getElementById("resetBtn")
-.onclick=()=>location.reload();
+// ========================
+document.getElementById("reset").onclick=()=>{
+location.reload();
+};
