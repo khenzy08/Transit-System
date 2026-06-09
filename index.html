@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Transit System Pro</title>
+<title>Angkas / Moovit Clone</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 <link rel="stylesheet" href="style.css">
@@ -14,30 +14,29 @@
 
 <body>
 
-<div class="container">
+<div class="app">
 
+<!-- SIDEBAR -->
 <div class="sidebar">
 
-<h2>🚌 Transit Pro System</h2>
+<h2>🚖 Transit App</h2>
 
-<h3>Origin</h3>
-<input id="originInput" placeholder="Search location">
+<input id="originInput" placeholder="From...">
 <div id="originResults"></div>
 
-<h4>Pickup Points</h4>
-<div id="pickupOptions"></div>
-
-<h3>Destination</h3>
-<input id="destinationInput" placeholder="Search destination">
+<input id="destinationInput" placeholder="To...">
 <div id="destinationResults"></div>
+
+<h3>Pickup Points</h3>
+<div id="pickupBox"></div>
 
 <h3>Routes</h3>
 
-<div class="route-card" data-route="0">⚡ Fastest Route</div>
-<div class="route-card" data-route="1">🛣️ Shortest Route</div>
-<div class="route-card" data-route="2">🚶 Least Walking</div>
+<div class="route-card" data-i="0">⚡ Fastest</div>
+<div class="route-card" data-i="1">💰 Cheapest</div>
+<div class="route-card" data-i="2">🚌 Least Transfers</div>
 
-<button id="resetBtn">Reset</button>
+<button id="reset">Reset</button>
 
 </div>
 
