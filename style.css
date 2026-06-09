@@ -2,12 +2,11 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial, sans-serif;
+    font-family:Arial,sans-serif;
 }
 
 body{
     height:100vh;
-    overflow:hidden;
 }
 
 .container{
@@ -18,8 +17,8 @@ body{
 .sidebar{
     width:350px;
     background:white;
-    padding:20px;
     border-right:1px solid #ddd;
+    padding:20px;
     overflow-y:auto;
 }
 
@@ -28,21 +27,44 @@ body{
     margin-bottom:20px;
 }
 
-.instructions{
-    background:#f5f5f5;
-    padding:15px;
-    border-radius:12px;
-    margin-bottom:20px;
+label{
+    display:block;
+    margin-top:10px;
+    margin-bottom:5px;
+    font-weight:bold;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+.results{
+    max-height:180px;
+    overflow-y:auto;
+    margin-bottom:10px;
+}
+
+.result-item{
+    padding:10px;
+    border-bottom:1px solid #eee;
+    cursor:pointer;
+}
+
+.result-item:hover{
+    background:#f4f4f4;
 }
 
 .route-panel{
-    margin-top:15px;
+    margin-top:20px;
 }
 
 .route-card{
     display:flex;
-    align-items:center;
     gap:12px;
+    align-items:center;
 
     border:2px solid #ddd;
     border-radius:12px;
@@ -51,12 +73,6 @@ body{
     margin-bottom:10px;
 
     cursor:pointer;
-
-    transition:0.3s;
-}
-
-.route-card:hover{
-    background:#f8f8f8;
 }
 
 .route-card.active{
@@ -64,33 +80,22 @@ body{
     background:#e8fff8;
 }
 
-.route-icon{
-    width:50px;
-    height:50px;
+.emoji{
+    font-size:36px;
 }
 
-.route-card h4{
-    margin-bottom:4px;
-}
-
-#resetBtn{
+#clearBtn{
     width:100%;
-    padding:12px;
     margin-top:20px;
+    padding:12px;
 
     border:none;
-    border-radius:12px;
+    border-radius:10px;
 
     background:#00a884;
     color:white;
 
-    font-size:16px;
-
     cursor:pointer;
-}
-
-#resetBtn:hover{
-    background:#008f72;
 }
 
 #map{
@@ -105,11 +110,11 @@ body{
 
     .sidebar{
         width:100%;
-        height:320px;
+        height:400px;
     }
 
     #map{
-        height:calc(100vh - 320px);
+        height:calc(100vh - 400px);
     }
 
 }
