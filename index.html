@@ -1,69 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transit Route Optimizer</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<title>Transit Route Optimizer</title>
 
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet"
-    href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
-    <!-- Your CSS -->
-    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
+
 <body>
 
-<div class="app">
+<div class="container">
 
     <div class="sidebar">
 
-        <h1>
-            <i class="fa-solid fa-route"></i>
-            Transit Route Optimizer
-        </h1>
+        <h2>🚌 Transit Route Optimizer</h2>
 
-        <label>
-            <i class="fa-solid fa-location-dot"></i>
-            Starting Point
-        </label>
-        <input
-            type="text"
-            id="start"
-            placeholder="Enter starting location">
-
-        <label>
-            <i class="fa-solid fa-flag-checkered"></i>
-            Destination
-        </label>
-        <input
-            type="text"
-            id="destination"
-            placeholder="Enter destination">
-
-        <label>
-            <i class="fa-solid fa-car"></i>
-            Vehicle Type
-        </label>
-
-        <select id="vehicle">
-            <option>Car</option>
-            <option>Motorcycle</option>
-        </select>
-
-        <button onclick="findRoute()">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            Find Best Route
-        </button>
-
-        <div id="result">
-            <h3>Ready</h3>
-            <p>Enter a route and click Find Best Route.</p>
+        <div class="instructions">
+            <strong>Instructions:</strong>
+            <br><br>
+            Click the map:
+            <br>
+            📍 First click = Starting Point
+            <br>
+            🎯 Second click = Destination
         </div>
+
+        <h3>Route Options</h3>
+
+        <div class="route-panel">
+
+            <div class="route-card active" data-route="0">
+
+                <img
+                    src="https://cdn-icons-png.flaticon.com/512/744/744465.png"
+                    class="route-icon"
+                >
+
+                <div>
+                    <h4>Fastest Route</h4>
+                    <p>25 mins</p>
+                </div>
+
+            </div>
+
+            <div class="route-card" data-route="1">
+
+                <img
+                    src="https://cdn-icons-png.flaticon.com/512/3523/3523887.png"
+                    class="route-icon"
+                >
+
+                <div>
+                    <h4>Cheapest Route</h4>
+                    <p>32 mins</p>
+                </div>
+
+            </div>
+
+            <div class="route-card" data-route="2">
+
+                <img
+                    src="https://cdn-icons-png.flaticon.com/512/2972/2972185.png"
+                    class="route-icon"
+                >
+
+                <div>
+                    <h4>Fewest Transfers</h4>
+                    <p>28 mins</p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <button id="resetBtn">
+            Reset Route
+        </button>
 
     </div>
 
@@ -71,7 +89,6 @@
 
 </div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="script.js"></script>
 
 </body>
