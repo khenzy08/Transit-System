@@ -1,34 +1,91 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Route Optimizer</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Transit Route Optimizer</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-<link rel="stylesheet" href="style.css"/>
+
+<link rel="stylesheet" href="style.css">
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 
 <body>
 
-<div class="app">
+<div class="container">
 
-<div class="sidebar">
+    <div class="sidebar">
 
-<h2>Route Optimizer</h2>
+        <h2>🚌 Transit Route Optimizer</h2>
 
-<input id="originInput" placeholder="Starting point">
-<div id="originResults"></div>
+        <div class="instructions">
+            <strong>Instructions:</strong>
+            <br><br>
+            Click the map:
+            <br>
+            📍 First click = Starting Point
+            <br>
+            🎯 Second click = Destination
+        </div>
 
-<input id="destinationInput" placeholder="Destination">
-<div id="destinationResults"></div>
+        <h3>Route Options</h3>
 
-<button id="reset">Reset</button>
+        <div class="route-panel">
 
-</div>
+            <div class="route-card active" data-route="0">
 
-<div id="map"></div>
+                <img
+                    src="https://cdn-icons-png.flaticon.com/512/744/744465.png"
+                    class="route-icon"
+                >
+
+                <div>
+                    <h4>Fastest Route</h4>
+                    <p>25 mins</p>
+                </div>
+
+            </div>
+
+            <div class="route-card" data-route="1">
+
+                <img
+                    src="https://cdn-icons-png.flaticon.com/512/3523/3523887.png"
+                    class="route-icon"
+                >
+
+                <div>
+                    <h4>Cheapest Route</h4>
+                    <p>32 mins</p>
+                </div>
+
+            </div>
+
+            <div class="route-card" data-route="2">
+
+                <img
+                    src="https://cdn-icons-png.flaticon.com/512/2972/2972185.png"
+                    class="route-icon"
+                >
+
+                <div>
+                    <h4>Fewest Transfers</h4>
+                    <p>28 mins</p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <button id="resetBtn">
+            Reset Route
+        </button>
+
+    </div>
+
+    <div id="map"></div>
 
 </div>
 
