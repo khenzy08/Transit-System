@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>Route Optimizer</title>
 
-<title>Angkas / Moovit Clone</title>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<link rel="stylesheet" href="style.css"/>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
@@ -16,25 +14,15 @@
 
 <div class="app">
 
-<!-- SIDEBAR -->
 <div class="sidebar">
 
-<h2>🚖 Transit App</h2>
+<h2>Route Optimizer</h2>
 
-<input id="originInput" placeholder="From...">
+<input id="originInput" placeholder="Starting point">
 <div id="originResults"></div>
 
-<input id="destinationInput" placeholder="To...">
+<input id="destinationInput" placeholder="Destination">
 <div id="destinationResults"></div>
-
-<h3>Pickup Points</h3>
-<div id="pickupBox"></div>
-
-<h3>Routes</h3>
-
-<div class="route-card" data-i="0">⚡ Fastest</div>
-<div class="route-card" data-i="1">💰 Cheapest</div>
-<div class="route-card" data-i="2">🚌 Least Transfers</div>
 
 <button id="reset">Reset</button>
 
