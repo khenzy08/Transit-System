@@ -9,35 +9,86 @@ L.tileLayer(
     }
 ).addTo(map);
 
-// Marker on Taytay
-L.marker([14.5764, 121.1329])
-    .addTo(map)
-    .bindPopup("Transit Route Optimizer")
-    .openPopup();
+// Variables
+let startMarker = null;
+let destinationMarker = null;
+let routeLine = null;
 
-// Button function
+// Click on map
+map.on('click', function(e) {
+
+    // First click = Start Point
+    if (!startMarker) {
+
+        startMarker = L.marker(e.latlng)
+            .addTo(map)
+            .bindPopup("📍 Start Point")
+            .openPopup();
+
+        document.getElementById("result").innerHTML =
+            "<h3>Start Point Selected</h3><p>Now click the map again to choose the destination.</p>";
+
+    }
+
+    // Second click = Destination
+    else if (!destinationMarker) {
+
+        destinationMarker = L.marker(e.latlng)
+            .addTo(map)
+            .bindPopup("🎯 Destination")
+            .openPopup();
+
+        // Draw line
+        routeLine = L.polyline(
+            [
+                startMarker.getLatLng(),
+                destinationMarker.getLatLng()
+            ],
+            {
+                weight: 5
+            }
+        ).addTo(map);
+
+        // Zoom to fit route
+        map.fitBounds(routeLine.getBounds());
+
+        // Calculate distance
+        const distance =
+            startMarker.getLatLng().distanceTo(
+                destinationMarker.getLatLng()
+            ) / 1000;
+
+        document.getElementById("result").innerHTML = `
+            <h3>Route Created ✅</h3>
+
+            <p><strong>Distance:</strong>
+            ${distance.toFixed(2)} km</p>
+
+            <p>📍 Start Point Selected</p>
+
+            <p>🎯 Destination Selected</p>
+        `;
+    }
+});
+
+// Reset route when button clicked
 function findRoute() {
 
-    const start =
-        document.getElementById("start").value;
+    if(startMarker){
+        map.removeLayer(startMarker);
+        startMarker = null;
+    }
 
-    const destination =
-        document.getElementById("destination").value;
+    if(destinationMarker){
+        map.removeLayer(destinationMarker);
+        destinationMarker = null;
+    }
 
-    const vehicle =
-        document.getElementById("vehicle").value;
+    if(routeLine){
+        map.removeLayer(routeLine);
+        routeLine = null;
+    }
 
-    document.getElementById("result").innerHTML = `
-        <h3>Route Found ✅</h3>
-
-        <p><strong>Start:</strong> ${start}</p>
-
-        <p><strong>Destination:</strong> ${destination}</p>
-
-        <p><strong>Vehicle:</strong> ${vehicle}</p>
-
-        <p><strong>Estimated Distance:</strong> 12 km</p>
-
-        <p><strong>Estimated Time:</strong> 20 minutes</p>
-    `;
+    document.getElementById("result").innerHTML =
+        "<h3>Ready</h3><p>Click the map to select a start point.</p>";
 }
