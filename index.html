@@ -1,27 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transit Route Optimizer</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet"
+    href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+    <!-- Your CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
 <div class="app">
 
     <div class="sidebar">
 
-        <h1>🚗 Transit Route Optimizer</h1>
+        <h1>
+            <i class="fa-solid fa-route"></i>
+            Transit Route Optimizer
+        </h1>
 
-        <label>Starting Point</label>
-        <input type="text" id="start" placeholder="Enter starting location">
+        <label>
+            <i class="fa-solid fa-location-dot"></i>
+            Starting Point
+        </label>
+        <input
+            type="text"
+            id="start"
+            placeholder="Enter starting location">
 
-        <label>Destination</label>
-        <input type="text" id="destination" placeholder="Enter destination">
+        <label>
+            <i class="fa-solid fa-flag-checkered"></i>
+            Destination
+        </label>
+        <input
+            type="text"
+            id="destination"
+            placeholder="Enter destination">
 
-        <label>Vehicle Type</label>
+        <label>
+            <i class="fa-solid fa-car"></i>
+            Vehicle Type
+        </label>
+
         <select id="vehicle">
             <option>Car</option>
             <option>Motorcycle</option>
         </select>
 
         <button onclick="findRoute()">
+            <i class="fa-solid fa-magnifying-glass"></i>
             Find Best Route
         </button>
 
         <div id="result">
-            Route information will appear here.
+            <h3>Ready</h3>
+            <p>Enter a route and click Find Best Route.</p>
         </div>
 
     </div>
@@ -29,3 +70,9 @@
     <div id="map"></div>
 
 </div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
