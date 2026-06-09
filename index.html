@@ -15,6 +15,11 @@
     <link rel="stylesheet"
         href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
@@ -27,7 +32,7 @@
         <aside class="sidebar">
 
             <div class="logo-section">
-                <h2>🚌 Transit Route Optimizer</h2>
+                <h2>🗺️ Transit Route Optimizer</h2>
                 <p class="subtitle">
                     Nationwide Road Routing for the Philippines
                 </p>
@@ -99,12 +104,42 @@
                     data-vehicle="motorcycle">
 
                     <div class="vehicle-icon">
-                        🏍
+                        🛵
                     </div>
 
                     <div>
                         <h4>Motorcycle</h4>
                         <p>Two-Wheel Travel</p>
+                    </div>
+
+                </div>
+
+                <div
+                    class="vehicle-card"
+                    data-vehicle="bicycle">
+
+                    <div class="vehicle-icon">
+                        🚴‍♂️
+                    </div>
+
+                    <div>
+                        <h4>Bicycle</h4>
+                        <p>Eco-friendly Ride</p>
+                    </div>
+
+                </div>
+
+                <div
+                    class="vehicle-card"
+                    data-vehicle="walking">
+
+                    <div class="vehicle-icon">
+                        🚶‍♀️
+                    </div>
+
+                    <div>
+                        <h4>Walking</h4>
+                        <p>Pedestrian Friendly</p>
                     </div>
 
                 </div>
@@ -197,13 +232,8 @@
 
     </div>
 
-    <!-- Leaflet -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-    <!-- Leaflet Routing Machine -->
-    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
-
-    <!-- Custom JS -->
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.min.js"></script>
     <script src="script.js"></script>
 
 </body>
