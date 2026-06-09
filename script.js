@@ -1,52 +1,26 @@
-body{
-    font-family: Arial, sans-serif;
-    background:#f4f4f4;
-    margin:0;
-    padding:0;
-}
+function findRoute() {
 
-.container{
-    width:80%;
-    max-width:600px;
-    margin:40px auto;
-    background:white;
-    padding:20px;
-    border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
+    const start =
+        document.getElementById("start").value;
 
-h1{
-    text-align:center;
-    color:#2563EB;
-}
+    const destination =
+        document.getElementById("destination").value;
 
-.form{
-    display:flex;
-    flex-direction:column;
-}
+    const vehicle =
+        document.getElementById("vehicle").value;
 
-input,
-select,
-button{
-    padding:10px;
-    margin-top:10px;
-    margin-bottom:15px;
-}
+    document.getElementById("result").innerHTML =
+    `
+    <h3>Route Found</h3>
 
-button{
-    background:#2563EB;
-    color:white;
-    border:none;
-    cursor:pointer;
-}
+    <p><strong>Start:</strong> ${start}</p>
 
-button:hover{
-    background:#1d4ed8;
-}
+    <p><strong>Destination:</strong> ${destination}</p>
 
-#result{
-    margin-top:20px;
-    padding:15px;
-    background:#eef4ff;
-    border-radius:8px;
+    <p><strong>Vehicle:</strong> ${vehicle}</p>
+
+    <p><strong>Estimated Distance:</strong> 12 km</p>
+
+    <p><strong>Estimated Time:</strong> 20 minutes</p>
+    `;
 }
