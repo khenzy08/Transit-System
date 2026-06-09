@@ -27,19 +27,29 @@ iconUrl:'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
 iconSize:[35,35]
 });
 
-// SEARCH FUNCTION
-async function search(q){
-if(q.length < 3) return [];
 
+// 🇵🇭 FIXED SEARCH (PH ONLY + BIASED)
+async function search(q){
+
+if(q.length < 2) return [];
+
+// bias around Philippines
 const res = await fetch(
-`https://nominatim.openstreetmap.org/search?format=json&q=${q}&limit=5`
+`https://nominatim.openstreetmap.org/search?` +
+`format=json&` +
+`q=${encodeURIComponent(q)}` +
+`&limit=5` +
+`&viewbox=120.5,14.2,121.5,15.2` +
+`&bounded=1`
 );
 
 return await res.json();
 }
 
+
 // SHOW RESULTS
 function showResults(data, container, type){
+
 container.innerHTML = '';
 
 data.forEach(item=>{
@@ -56,6 +66,7 @@ container.appendChild(div);
 
 }
 
+
 // SELECT LOCATION
 function selectLocation(item,type){
 
@@ -66,7 +77,6 @@ map.setView([lat,lon],15);
 
 if(type === 'origin'){
 origin = {lat,lon};
-
 generatePickup(lat,lon);
 }
 
@@ -89,7 +99,8 @@ drawRoute(0);
 
 }
 
-// PICKUP OPTIONS (IMPORTANT PART)
+
+// PICKUP POINTS
 function generatePickup(lat,lon){
 
 pickupMarkers.forEach(m=>map.removeLayer(m));
@@ -99,7 +110,7 @@ pickup = null;
 
 const options = [
 { name:"Main Entrance", lat:lat+0.0005, lon },
-{ name:"Roadside", lat, lon:lon+0.0005 },
+{ name:"Roadside Pickup", lat, lon:lon+0.0005 },
 { name:"Terminal", lat:lat-0.0005, lon:lon-0.0005 }
 ];
 
@@ -141,6 +152,7 @@ box.appendChild(div);
 
 }
 
+
 // ROUTES
 function createRoutes(){
 
@@ -173,6 +185,7 @@ routes = [
 
 }
 
+
 // DRAW ROUTE
 function drawRoute(i){
 
@@ -188,6 +201,7 @@ weight:5
 map.fitBounds(routeLayer.getBounds());
 
 }
+
 
 // INPUT EVENTS
 document.getElementById("originInput")
@@ -206,6 +220,7 @@ showResults(data,destinationResults,'destination');
 
 });
 
+
 // ROUTE SWITCH
 document.querySelectorAll(".route-card")
 .forEach((c,i)=>{
@@ -213,6 +228,7 @@ document.querySelectorAll(".route-card")
 c.onclick = ()=>drawRoute(i);
 
 });
+
 
 // RESET
 document.getElementById("resetBtn")
