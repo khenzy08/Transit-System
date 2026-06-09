@@ -10,10 +10,10 @@ body{
 }
 
 .sidebar{
-    width:320px;
+    width:330px;
     background:white;
     padding:25px;
-    box-shadow:2px 0 10px rgba(0,0,0,0.1);
+    box-shadow:2px 0 15px rgba(0,0,0,0.1);
     z-index:1000;
 }
 
@@ -26,8 +26,9 @@ body{
 label{
     display:block;
     margin-top:15px;
-    margin-bottom:5px;
+    margin-bottom:8px;
     font-weight:bold;
+    color:#333;
 }
 
 input,
@@ -36,18 +37,19 @@ select{
     padding:12px;
     border:1px solid #ddd;
     border-radius:8px;
-    margin-bottom:10px;
+    box-sizing:border-box;
 }
 
 button{
     width:100%;
+    margin-top:20px;
     padding:12px;
     background:#2563EB;
     color:white;
     border:none;
     border-radius:8px;
+    font-size:16px;
     cursor:pointer;
-    margin-top:10px;
 }
 
 button:hover{
