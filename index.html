@@ -1,106 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Transit Route Optimizer</title>
 
-<link rel="stylesheet"
-href="https://unpkg.com/leaflet/dist/leaflet.css">
-
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 <link rel="stylesheet" href="style.css">
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
 </head>
 
 <body>
 
 <div class="container">
 
-    <div class="sidebar">
+<!-- SIDEBAR -->
+<div class="sidebar">
 
-        <h2>🚌 Transit Route Optimizer</h2>
+<h2>🚌 Transit Route Optimizer</h2>
 
-        <div class="search-box">
+<!-- START -->
+<h3>Starting Point</h3>
+<input id="originInput" placeholder="Search starting location">
+<div id="originResults" class="results"></div>
 
-            <label>Starting Location</label>
+<!-- PICKUP OPTIONS -->
+<h4>Suggested Pickup Points</h4>
+<div id="pickupOptions"></div>
 
-            <input
-                type="text"
-                id="originInput"
-                placeholder="Search address..."
-            >
+<!-- DESTINATION -->
+<h3>Destination</h3>
+<input id="destinationInput" placeholder="Search destination">
+<div id="destinationResults" class="results"></div>
 
-            <div
-                id="originResults"
-                class="results">
-            </div>
+<!-- ROUTES -->
+<h3>Route Options</h3>
 
-            <label>Destination</label>
+<div class="route-card active" data-route="0">
+⚡ Fastest Route
+</div>
 
-            <input
-                type="text"
-                id="destinationInput"
-                placeholder="Search address..."
-            >
+<div class="route-card" data-route="1">
+💰 Cheapest Route
+</div>
 
-            <div
-                id="destinationResults"
-                class="results">
-            </div>
+<div class="route-card" data-route="2">
+🚌 Least Transfers
+</div>
 
-        </div>
+<button id="resetBtn">Reset</button>
 
-        <div class="route-panel">
+</div>
 
-            <div class="route-card active"
-                 data-route="0">
-
-                <span class="emoji">⚡</span>
-
-                <div>
-                    <h4>Fastest</h4>
-                    <p>25 mins</p>
-                </div>
-
-            </div>
-
-            <div class="route-card"
-                 data-route="1">
-
-                <span class="emoji">💰</span>
-
-                <div>
-                    <h4>Cheapest</h4>
-                    <p>32 mins</p>
-                </div>
-
-            </div>
-
-            <div class="route-card"
-                 data-route="2">
-
-                <span class="emoji">🚌</span>
-
-                <div>
-                    <h4>Least Transfers</h4>
-                    <p>28 mins</p>
-                </div>
-
-            </div>
-
-        </div>
-
-        <button id="clearBtn">
-            Reset
-        </button>
-
-    </div>
-
-    <div id="map"></div>
+<!-- MAP -->
+<div id="map"></div>
 
 </div>
 
