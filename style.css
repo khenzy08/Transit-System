@@ -1,11 +1,19 @@
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
 
 body{height:100vh;}
 
-.container{display:flex;height:100vh;}
+.app{
+display:flex;
+height:100vh;
+}
 
 .sidebar{
-width:350px;
+width:360px;
 padding:15px;
 overflow:auto;
 border-right:1px solid #ddd;
@@ -16,14 +24,9 @@ h2{color:#00a884;}
 input{
 width:100%;
 padding:10px;
-margin:5px 0;
+margin:6px 0;
 border:1px solid #ccc;
 border-radius:8px;
-}
-
-#originResults,#destinationResults{
-max-height:150px;
-overflow:auto;
 }
 
 .result{
@@ -32,17 +35,21 @@ border-bottom:1px solid #eee;
 cursor:pointer;
 }
 
-.result:hover{background:#f0f0f0;}
+.result:hover{
+background:#f3f3f3;
+}
 
-.pickup{
+#pickupBox .pickup{
 padding:8px;
-border:1px solid #ddd;
 margin:5px 0;
+border:1px solid #ddd;
 border-radius:8px;
 cursor:pointer;
 }
 
-.pickup:hover{background:#e8fff8;}
+#pickupBox .pickup:hover{
+background:#e8fff8;
+}
 
 .route-card{
 padding:10px;
@@ -68,10 +75,12 @@ border-radius:8px;
 cursor:pointer;
 }
 
-#map{flex:1;}
+#map{
+flex:1;
+}
 
 @media(max-width:768px){
-.container{flex-direction:column;}
-.sidebar{height:400px;width:100%;}
-#map{height:calc(100vh - 400px);}
+.app{flex-direction:column;}
+.sidebar{width:100%;height:420px;}
+#map{height:calc(100vh - 420px);}
 }
