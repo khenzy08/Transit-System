@@ -13,18 +13,16 @@ height:100vh;
 }
 
 .sidebar{
-width:360px;
+width:320px;
 padding:15px;
-overflow:auto;
 border-right:1px solid #ddd;
+overflow:auto;
 }
-
-h2{color:#00a884;}
 
 input{
 width:100%;
 padding:10px;
-margin:6px 0;
+margin:8px 0;
 border:1px solid #ccc;
 border-radius:8px;
 }
@@ -36,51 +34,9 @@ cursor:pointer;
 }
 
 .result:hover{
-background:#f3f3f3;
-}
-
-#pickupBox .pickup{
-padding:8px;
-margin:5px 0;
-border:1px solid #ddd;
-border-radius:8px;
-cursor:pointer;
-}
-
-#pickupBox .pickup:hover{
-background:#e8fff8;
-}
-
-.route-card{
-padding:10px;
-margin:8px 0;
-border:2px solid #ddd;
-border-radius:10px;
-cursor:pointer;
-}
-
-.route-card.active{
-border-color:#00a884;
-background:#e8fff8;
-}
-
-button{
-width:100%;
-padding:10px;
-margin-top:10px;
-background:#00a884;
-color:white;
-border:none;
-border-radius:8px;
-cursor:pointer;
+background:#f0f0f0;
 }
 
 #map{
 flex:1;
-}
-
-@media(max-width:768px){
-.app{flex-direction:column;}
-.sidebar{width:100%;height:420px;}
-#map{height:calc(100vh - 420px);}
 }
