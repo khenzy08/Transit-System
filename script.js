@@ -1,7 +1,7 @@
-// Create map centered on Taytay, Rizal
+// Create map
 var map = L.map('map').setView([14.5764, 121.1329], 13);
 
-// Load OpenStreetMap tiles
+// OpenStreetMap tiles
 L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     {
@@ -9,21 +9,26 @@ L.tileLayer(
     }
 ).addTo(map);
 
-// Add marker for Taytay
+// Marker on Taytay
 L.marker([14.5764, 121.1329])
     .addTo(map)
-    .bindPopup("Taytay, Rizal")
+    .bindPopup("Transit Route Optimizer")
     .openPopup();
 
-// Function when user clicks Find Route
+// Button function
 function findRoute() {
 
-    const start = document.getElementById("start").value;
-    const destination = document.getElementById("destination").value;
-    const vehicle = document.getElementById("vehicle").value;
+    const start =
+        document.getElementById("start").value;
+
+    const destination =
+        document.getElementById("destination").value;
+
+    const vehicle =
+        document.getElementById("vehicle").value;
 
     document.getElementById("result").innerHTML = `
-        <h3>Route Found</h3>
+        <h3>Route Found ✅</h3>
 
         <p><strong>Start:</strong> ${start}</p>
 
@@ -34,7 +39,5 @@ function findRoute() {
         <p><strong>Estimated Distance:</strong> 12 km</p>
 
         <p><strong>Estimated Time:</strong> 20 minutes</p>
-
-        <p><strong>Status:</strong> Route Ready ✅</p>
     `;
 }
