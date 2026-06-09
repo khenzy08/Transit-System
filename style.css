@@ -1,120 +1,112 @@
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
 }
 
 body{
-    height:100vh;
+height:100vh;
 }
 
 .container{
-    display:flex;
-    height:100vh;
+display:flex;
+height:100vh;
 }
 
+/* SIDEBAR */
 .sidebar{
-    width:350px;
-    background:white;
-    border-right:1px solid #ddd;
-    padding:20px;
-    overflow-y:auto;
+width:350px;
+padding:15px;
+overflow-y:auto;
+border-right:1px solid #ddd;
 }
 
-.sidebar h2{
-    color:#00a884;
-    margin-bottom:20px;
-}
-
-label{
-    display:block;
-    margin-top:10px;
-    margin-bottom:5px;
-    font-weight:bold;
+h2{
+color:#00a884;
+margin-bottom:10px;
 }
 
 input{
-    width:100%;
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:8px;
+width:100%;
+padding:10px;
+margin-bottom:5px;
+border:1px solid #ccc;
+border-radius:8px;
 }
 
 .results{
-    max-height:180px;
-    overflow-y:auto;
-    margin-bottom:10px;
+max-height:150px;
+overflow:auto;
 }
 
 .result-item{
-    padding:10px;
-    border-bottom:1px solid #eee;
-    cursor:pointer;
+padding:8px;
+border-bottom:1px solid #eee;
+cursor:pointer;
 }
 
 .result-item:hover{
-    background:#f4f4f4;
+background:#f0f0f0;
 }
 
-.route-panel{
-    margin-top:20px;
+/* pickup */
+#pickupOptions{
+margin:10px 0;
 }
 
+.pickup{
+padding:8px;
+margin:5px 0;
+border:1px solid #ddd;
+border-radius:8px;
+cursor:pointer;
+}
+
+.pickup:hover{
+background:#e8fff8;
+}
+
+/* route cards */
 .route-card{
-    display:flex;
-    gap:12px;
-    align-items:center;
-
-    border:2px solid #ddd;
-    border-radius:12px;
-
-    padding:12px;
-    margin-bottom:10px;
-
-    cursor:pointer;
+padding:10px;
+margin:8px 0;
+border:2px solid #ddd;
+border-radius:10px;
+cursor:pointer;
 }
 
 .route-card.active{
-    border-color:#00a884;
-    background:#e8fff8;
+border-color:#00a884;
+background:#e8fff8;
 }
 
-.emoji{
-    font-size:36px;
+button{
+width:100%;
+padding:10px;
+margin-top:10px;
+background:#00a884;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
 }
 
-#clearBtn{
-    width:100%;
-    margin-top:20px;
-    padding:12px;
-
-    border:none;
-    border-radius:10px;
-
-    background:#00a884;
-    color:white;
-
-    cursor:pointer;
-}
-
+/* MAP */
 #map{
-    flex:1;
+flex:1;
 }
 
+/* mobile */
 @media(max-width:768px){
-
-    .container{
-        flex-direction:column;
-    }
-
-    .sidebar{
-        width:100%;
-        height:400px;
-    }
-
-    #map{
-        height:calc(100vh - 400px);
-    }
-
+.container{
+flex-direction:column;
+}
+.sidebar{
+width:100%;
+height:400px;
+}
+#map{
+height:calc(100vh - 400px);
+}
 }
