@@ -1,141 +1,202 @@
-const map = L.map('map').setView([14.58,121.13],13);
+// Initialize map
+const map = L.map('map').setView([14.5995, 120.9842], 13);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-attribution:'© OpenStreetMap'
-}).addTo(map);
-
-// STATE
-let origin=null;
-let destination=null;
-
-let originMarker=null;
-let destinationMarker=null;
-
-let routeLine=null;
-
-// ======================
-// SEARCH (FIXED STABLE)
-// ======================
-async function search(q){
-if(!q || q.length < 2) return [];
-
-const res = await fetch(
-`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q + ", Philippines")}&limit=5`
-);
-
-return await res.json();
-}
-
-// ======================
-// SHOW RESULTS (FIXED DOM)
-// ======================
-function showResults(data, boxId, type){
-
-const box = document.getElementById(boxId);
-box.innerHTML = "";
-
-data.forEach(item=>{
-
-const div = document.createElement("div");
-div.className = "result";
-div.innerText = item.display_name;
-
-div.onclick = ()=>select(item,type);
-
-box.appendChild(div);
-
-});
-
-}
-
-// ======================
-// SELECT LOCATION (FIXED)
-// ======================
-function select(item,type){
-
-const lat = parseFloat(item.lat);
-const lon = parseFloat(item.lon);
-
-map.setView([lat,lon],15);
-
-if(type === "origin"){
-
-origin = {lat,lon};
-
-if(originMarker){
-map.removeLayer(originMarker);
-}
-
-originMarker = L.marker([lat,lon])
-.addTo(map)
-.bindPopup("Start")
-.openPopup();
-
-}
-
-if(type === "destination"){
-
-destination = {lat,lon};
-
-if(destinationMarker){
-map.removeLayer(destinationMarker);
-}
-
-destinationMarker = L.marker([lat,lon])
-.addTo(map)
-.bindPopup("Destination")
-.openPopup();
-
-}
-
-if(origin && destination){
-drawRoute();
-}
-
-}
-
-// ======================
-// REAL ROUTE LINE
-// ======================
-function drawRoute(){
-
-if(routeLine){
-map.removeLayer(routeLine);
-}
-
-routeLine = L.polyline(
-[
-[origin.lat,origin.lon],
-[destination.lat,destination.lon]
-],
-{
-color:"#00a884",
-weight:5
-}
+// OpenStreetMap layer
+L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+        attribution: '&copy; OpenStreetMap'
+    }
 ).addTo(map);
 
-map.fitBounds(routeLine.getBounds(),{
-padding:[40,40]
+// Custom marker icons
+const startIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+    iconSize: [40,40],
+    iconAnchor: [20,40],
+    popupAnchor: [0,-35]
 });
 
+const destinationIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
+    iconSize: [40,40],
+    iconAnchor: [20,40],
+    popupAnchor: [0,-35]
+});
+
+let originMarker = null;
+let destinationMarker = null;
+
+let clickCount = 0;
+
+let currentRouteLayer = null;
+
+let routes = [];
+
+// Create route variations
+function generateRoutes(start,end){
+
+    const midLat =
+        (start.lat + end.lat) / 2;
+
+    const midLng =
+        (start.lng + end.lng) / 2;
+
+    return [
+
+        [
+            [start.lat,start.lng],
+            [midLat + 0.01,midLng],
+            [end.lat,end.lng]
+        ],
+
+        [
+            [start.lat,start.lng],
+            [midLat,midLng + 0.02],
+            [end.lat,end.lng]
+        ],
+
+        [
+            [start.lat,start.lng],
+            [midLat - 0.015,midLng - 0.01],
+            [end.lat,end.lng]
+        ]
+
+    ];
 }
 
-// ======================
-// INPUT EVENTS (FIXED)
-// ======================
-document.getElementById("originInput").addEventListener("input",async function(){
-const data = await search(this.value);
-showResults(data,"originResults","origin");
+// Draw selected route
+function drawRoute(index){
+
+    if(!originMarker || !destinationMarker){
+        return;
+    }
+
+    if(currentRouteLayer){
+        map.removeLayer(currentRouteLayer);
+    }
+
+    const colors = [
+        "#00a884",
+        "#0984e3",
+        "#f39c12"
+    ];
+
+    currentRouteLayer = L.polyline(
+        routes[index],
+        {
+            color: colors[index],
+            weight: 7
+        }
+    ).addTo(map);
+
+    map.fitBounds(
+        currentRouteLayer.getBounds(),
+        {
+            padding:[50,50]
+        }
+    );
+}
+
+// Map click event
+map.on('click', function(e){
+
+    if(clickCount === 0){
+
+        originMarker = L.marker(
+            e.latlng,
+            {
+                icon:startIcon
+            }
+        )
+        .addTo(map)
+        .bindPopup("Starting Point")
+        .openPopup();
+
+        clickCount++;
+
+    }
+
+    else if(clickCount === 1){
+
+        destinationMarker = L.marker(
+            e.latlng,
+            {
+                icon:destinationIcon
+            }
+        )
+        .addTo(map)
+        .bindPopup("Destination")
+        .openPopup();
+
+        clickCount++;
+
+        const start =
+            originMarker.getLatLng();
+
+        const end =
+            destinationMarker.getLatLng();
+
+        routes = generateRoutes(
+            start,
+            end
+        );
+
+        drawRoute(0);
+    }
+
 });
 
-document.getElementById("destinationInput").addEventListener("input",async function(){
-const data = await search(this.value);
-showResults(data,"destinationResults","destination");
+// Route cards
+document
+.querySelectorAll('.route-card')
+.forEach(card => {
+
+    card.addEventListener(
+        'click',
+        () => {
+
+            document
+            .querySelectorAll('.route-card')
+            .forEach(c =>
+                c.classList.remove('active')
+            );
+
+            card.classList.add('active');
+
+            const routeIndex =
+                parseInt(
+                    card.dataset.route
+                );
+
+            drawRoute(routeIndex);
+        }
+    );
+
 });
 
-// ======================
-// RESET
-// ======================
-document.getElementById("reset").onclick = ()=>{
-location.reload();
-};
+// Reset button
+document
+.getElementById('resetBtn')
+.addEventListener('click', () => {
+
+    if(originMarker){
+        map.removeLayer(originMarker);
+    }
+
+    if(destinationMarker){
+        map.removeLayer(destinationMarker);
+    }
+
+    if(currentRouteLayer){
+        map.removeLayer(currentRouteLayer);
+    }
+
+    originMarker = null;
+    destinationMarker = null;
+
+    routes = [];
+
+    clickCount = 0;
+
+});
