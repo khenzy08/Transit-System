@@ -1,7 +1,14 @@
-// Initialize map
-const map = L.map('map').setView([14.5995, 120.9842], 13);
+// =====================================
+// PHILIPPINES TRANSIT ROUTE OPTIMIZER
+// =====================================
 
-// OpenStreetMap layer
+// Initialize map
+const map = L.map('map').setView(
+    [12.8797, 121.7740], // Philippines center
+    6
+);
+
+// OpenStreetMap tiles
 L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     {
@@ -9,96 +16,109 @@ L.tileLayer(
     }
 ).addTo(map);
 
-// Custom marker icons
+// =====================
+// Custom Icons
+// =====================
+
 const startIcon = L.icon({
-    iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+    iconUrl:
+    'https://cdn-icons-png.flaticon.com/512/684/684908.png',
     iconSize: [40,40],
-    iconAnchor: [20,40],
-    popupAnchor: [0,-35]
+    iconAnchor: [20,40]
 });
 
 const destinationIcon = L.icon({
-    iconUrl: 'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
+    iconUrl:
+    'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
     iconSize: [40,40],
-    iconAnchor: [20,40],
-    popupAnchor: [0,-35]
+    iconAnchor: [20,40]
 });
+
+// =====================
+// Variables
+// =====================
 
 let originMarker = null;
 let destinationMarker = null;
 
 let clickCount = 0;
 
-let currentRouteLayer = null;
+let routingControl = null;
 
-let routes = [];
+// =====================
+// Create Route
+// =====================
 
-// Create route variations
-function generateRoutes(start,end){
+function createRoute(routeType = 0){
 
-    const midLat =
-        (start.lat + end.lat) / 2;
-
-    const midLng =
-        (start.lng + end.lng) / 2;
-
-    return [
-
-        [
-            [start.lat,start.lng],
-            [midLat + 0.01,midLng],
-            [end.lat,end.lng]
-        ],
-
-        [
-            [start.lat,start.lng],
-            [midLat,midLng + 0.02],
-            [end.lat,end.lng]
-        ],
-
-        [
-            [start.lat,start.lng],
-            [midLat - 0.015,midLng - 0.01],
-            [end.lat,end.lng]
-        ]
-
-    ];
-}
-
-// Draw selected route
-function drawRoute(index){
-
-    if(!originMarker || !destinationMarker){
+    if(
+        !originMarker ||
+        !destinationMarker
+    ){
         return;
     }
 
-    if(currentRouteLayer){
-        map.removeLayer(currentRouteLayer);
+    if(routingControl){
+        map.removeControl(
+            routingControl
+        );
     }
 
-    const colors = [
-        "#00a884",
-        "#0984e3",
-        "#f39c12"
-    ];
+    const start =
+        originMarker.getLatLng();
 
-    currentRouteLayer = L.polyline(
-        routes[index],
-        {
-            color: colors[index],
-            weight: 7
-        }
-    ).addTo(map);
+    const end =
+        destinationMarker.getLatLng();
 
-    map.fitBounds(
-        currentRouteLayer.getBounds(),
-        {
-            padding:[50,50]
+    let lineColor = "#00a884";
+
+    if(routeType === 1){
+        lineColor = "#0984e3";
+    }
+
+    if(routeType === 2){
+        lineColor = "#f39c12";
+    }
+
+    routingControl = L.Routing.control({
+
+        waypoints: [
+            start,
+            end
+        ],
+
+        routeWhileDragging: false,
+
+        draggableWaypoints: false,
+
+        addWaypoints: false,
+
+        show: false,
+
+        fitSelectedRoutes: true,
+
+        lineOptions: {
+            styles: [
+                {
+                    color: lineColor,
+                    opacity: 0.9,
+                    weight: 7
+                }
+            ]
+        },
+
+        createMarker: function(){
+            return null;
         }
-    );
+
+    }).addTo(map);
+
 }
 
-// Map click event
+// =====================
+// Map Click Logic
+// =====================
+
 map.on('click', function(e){
 
     if(clickCount === 0){
@@ -110,7 +130,9 @@ map.on('click', function(e){
             }
         )
         .addTo(map)
-        .bindPopup("Starting Point")
+        .bindPopup(
+            "Starting Point"
+        )
         .openPopup();
 
         clickCount++;
@@ -126,28 +148,23 @@ map.on('click', function(e){
             }
         )
         .addTo(map)
-        .bindPopup("Destination")
+        .bindPopup(
+            "Destination"
+        )
         .openPopup();
 
         clickCount++;
 
-        const start =
-            originMarker.getLatLng();
+        createRoute(0);
 
-        const end =
-            destinationMarker.getLatLng();
-
-        routes = generateRoutes(
-            start,
-            end
-        );
-
-        drawRoute(0);
     }
 
 });
 
-// Route cards
+// =====================
+// Route Cards
+// =====================
+
 document
 .querySelectorAll('.route-card')
 .forEach(card => {
@@ -159,44 +176,68 @@ document
             document
             .querySelectorAll('.route-card')
             .forEach(c =>
-                c.classList.remove('active')
+                c.classList.remove(
+                    'active'
+                )
             );
 
-            card.classList.add('active');
+            card.classList.add(
+                'active'
+            );
 
             const routeIndex =
                 parseInt(
                     card.dataset.route
                 );
 
-            drawRoute(routeIndex);
+            createRoute(
+                routeIndex
+            );
+
         }
     );
 
 });
 
-// Reset button
+// =====================
+// Reset Button
+// =====================
+
 document
-.getElementById('resetBtn')
-.addEventListener('click', () => {
+.getElementById(
+    'resetBtn'
+)
+.addEventListener(
+    'click',
+    () => {
 
-    if(originMarker){
-        map.removeLayer(originMarker);
+        if(originMarker){
+            map.removeLayer(
+                originMarker
+            );
+        }
+
+        if(destinationMarker){
+            map.removeLayer(
+                destinationMarker
+            );
+        }
+
+        if(routingControl){
+            map.removeControl(
+                routingControl
+            );
+        }
+
+        originMarker = null;
+        destinationMarker = null;
+
+        clickCount = 0;
+
+        map.setView(
+            [12.8797,121.7740],
+            6
+        );
+
     }
-
-    if(destinationMarker){
-        map.removeLayer(destinationMarker);
-    }
-
-    if(currentRouteLayer){
-        map.removeLayer(currentRouteLayer);
-    }
-
-    originMarker = null;
-    destinationMarker = null;
-
-    routes = [];
-
-    clickCount = 0;
-
-});
+);
