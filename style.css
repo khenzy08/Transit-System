@@ -5,16 +5,13 @@ box-sizing:border-box;
 font-family:Arial;
 }
 
-body{
-height:100vh;
-}
+body{height:100vh;}
 
 .container{
 display:flex;
 height:100vh;
 }
 
-/* SIDEBAR */
 .sidebar{
 width:350px;
 padding:15px;
@@ -22,15 +19,12 @@ overflow-y:auto;
 border-right:1px solid #ddd;
 }
 
-h2{
-color:#00a884;
-margin-bottom:10px;
-}
+h2{color:#00a884;}
 
 input{
 width:100%;
 padding:10px;
-margin-bottom:5px;
+margin:5px 0;
 border:1px solid #ccc;
 border-radius:8px;
 }
@@ -46,14 +40,7 @@ border-bottom:1px solid #eee;
 cursor:pointer;
 }
 
-.result-item:hover{
-background:#f0f0f0;
-}
-
-/* pickup */
-#pickupOptions{
-margin:10px 0;
-}
+.result-item:hover{background:#f0f0f0;}
 
 .pickup{
 padding:8px;
@@ -63,11 +50,8 @@ border-radius:8px;
 cursor:pointer;
 }
 
-.pickup:hover{
-background:#e8fff8;
-}
+.pickup:hover{background:#e8fff8;}
 
-/* route cards */
 .route-card{
 padding:10px;
 margin:8px 0;
@@ -92,21 +76,10 @@ border-radius:8px;
 cursor:pointer;
 }
 
-/* MAP */
-#map{
-flex:1;
-}
+#map{flex:1;}
 
-/* mobile */
 @media(max-width:768px){
-.container{
-flex-direction:column;
-}
-.sidebar{
-width:100%;
-height:400px;
-}
-#map{
-height:calc(100vh - 400px);
-}
+.container{flex-direction:column;}
+.sidebar{width:100%;height:400px;}
+#map{height:calc(100vh - 400px);}
 }
