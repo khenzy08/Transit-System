@@ -1,452 +1,211 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Transit Route Optimizer</title>
+    <title>Transit Route Optimizer - Philippines</title>
 
-<!-- Leaflet -->
+    <!-- Leaflet -->
+    <link rel="stylesheet"
+        href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
-<link rel="stylesheet"
-href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <!-- Leaflet Routing Machine -->
+    <link rel="stylesheet"
+        href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-<!-- Leaflet Routing Machine -->
-
-<link rel="stylesheet"
-href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"/>
-
-<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
-
-<style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,sans-serif;
-}
-
-body{
-    height:100vh;
-    overflow:hidden;
-}
-
-.container{
-    display:flex;
-    height:100vh;
-}
-
-.sidebar{
-    width:320px;
-    background:white;
-    padding:20px;
-    overflow-y:auto;
-    box-shadow:2px 0 10px rgba(0,0,0,0.1);
-    z-index:1000;
-}
-
-.sidebar h2{
-    margin-bottom:20px;
-}
-
-.instructions{
-    background:#f5f5f5;
-    padding:15px;
-    border-radius:10px;
-    margin-bottom:20px;
-}
-
-.route-panel{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    margin-top:15px;
-}
-
-.route-card{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:12px;
-    border:2px solid #ddd;
-    border-radius:12px;
-    cursor:pointer;
-    transition:0.3s;
-}
-
-.route-card:hover{
-    border-color:#00a884;
-}
-
-.route-card.active{
-    border-color:#00a884;
-    background:#e8fff8;
-}
-
-.route-icon{
-    width:40px;
-    height:40px;
-}
-
-#resetBtn{
-    margin-top:20px;
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    background:#e74c3c;
-    color:white;
-    font-size:16px;
-    cursor:pointer;
-}
-
-#resetBtn:hover{
-    background:#c0392b;
-}
-
-#map{
-    flex:1;
-    height:100vh;
-}
-
-.leaflet-routing-container{
-    display:none;
-}
-
-</style>
-
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-```
-<div class="sidebar">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
 
-    <h2>🚌 Transit Route Optimizer</h2>
+            <div class="logo-section">
+                <h2>🚌 Transit Route Optimizer</h2>
+                <p class="subtitle">
+                    Nationwide Road Routing for the Philippines
+                </p>
+            </div>
 
-    <div class="instructions">
+            <!-- SEARCH SECTION -->
+            <div class="search-section">
 
-        <strong>Instructions:</strong>
+                <label for="fromInput">
+                    <strong>From</strong>
+                </label>
 
-        <br><br>
+                <div class="autocomplete-container">
+                    <input
+                        type="text"
+                        id="fromInput"
+                        placeholder="Enter starting location..."
+                        autocomplete="off">
 
-        Click the map:
+                    <div
+                        id="fromSuggestions"
+                        class="suggestions-box">
+                    </div>
+                </div>
 
-        <br>
+                <label for="toInput">
+                    <strong>To</strong>
+                </label>
 
-        📍 First click = Starting Point
+                <div class="autocomplete-container">
+                    <input
+                        type="text"
+                        id="toInput"
+                        placeholder="Enter destination..."
+                        autocomplete="off">
 
-        <br>
+                    <div
+                        id="toSuggestions"
+                        class="suggestions-box">
+                    </div>
+                </div>
 
-        🎯 Second click = Destination
+            </div>
+
+            <!-- VEHICLE SELECTION -->
+            <div class="section-title">
+                Vehicle Type
+            </div>
+
+            <div class="vehicle-panel">
+
+                <div
+                    class="vehicle-card active"
+                    data-vehicle="car">
+
+                    <div class="vehicle-icon">
+                        🚗
+                    </div>
+
+                    <div>
+                        <h4>Car</h4>
+                        <p>Standard Driving</p>
+                    </div>
+
+                </div>
+
+                <div
+                    class="vehicle-card"
+                    data-vehicle="motorcycle">
+
+                    <div class="vehicle-icon">
+                        🏍
+                    </div>
+
+                    <div>
+                        <h4>Motorcycle</h4>
+                        <p>Two-Wheel Travel</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ROUTE OPTIONS -->
+            <div class="section-title">
+                Route Options
+            </div>
+
+            <div class="route-panel">
+
+                <div
+                    class="route-card active"
+                    data-route="fastest">
+
+                    <div class="route-icon">
+                        ⚡
+                    </div>
+
+                    <div>
+                        <h4>Fastest Route</h4>
+                        <p>Optimized Travel Time</p>
+                    </div>
+
+                </div>
+
+                <div
+                    class="route-card"
+                    data-route="cheapest">
+
+                    <div class="route-icon">
+                        💰
+                    </div>
+
+                    <div>
+                        <h4>Cheapest Route</h4>
+                        <p>Fuel Efficient</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ROUTE INFO -->
+            <div class="route-info">
+
+                <div class="info-card">
+                    <span>Distance</span>
+                    <strong id="distanceText">
+                        --
+                    </strong>
+                </div>
+
+                <div class="info-card">
+                    <span>Estimated Time</span>
+                    <strong id="timeText">
+                        --
+                    </strong>
+                </div>
+
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="button-group">
+
+                <button
+                    id="findRouteBtn"
+                    class="primary-btn">
+
+                    Find Route
+
+                </button>
+
+                <button
+                    id="resetBtn"
+                    class="secondary-btn">
+
+                    Reset Route
+
+                </button>
+
+            </div>
+
+        </aside>
+
+        <!-- MAP -->
+        <main id="map"></main>
 
     </div>
 
-    <h3>Route Options</h3>
+    <!-- Leaflet -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-    <div class="route-panel">
+    <!-- Leaflet Routing Machine -->
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
 
-        <div class="route-card active"
-             data-route="0">
-
-            <img
-            src="https://cdn-icons-png.flaticon.com/512/744/744465.png"
-            class="route-icon">
-
-            <div>
-                <h4>Fastest Route</h4>
-                <p>Real Road Route</p>
-            </div>
-
-        </div>
-
-        <div class="route-card"
-             data-route="1">
-
-            <img
-            src="https://cdn-icons-png.flaticon.com/512/3523/3523887.png"
-            class="route-icon">
-
-            <div>
-                <h4>Cheapest Route</h4>
-                <p>Route Option</p>
-            </div>
-
-        </div>
-
-        <div class="route-card"
-             data-route="2">
-
-            <img
-            src="https://cdn-icons-png.flaticon.com/512/2972/2972185.png"
-            class="route-icon">
-
-            <div>
-                <h4>Fewest Transfers</h4>
-                <p>Route Option</p>
-            </div>
-
-        </div>
-
-    </div>
-
-    <button id="resetBtn">
-        Reset Route
-    </button>
-
-</div>
-
-<div id="map"></div>
-```
-
-</div>
-
-<script>
-
-// =====================================
-// Initialize Map
-// =====================================
-
-const map = L.map('map').setView(
-    [12.8797,121.7740],
-    6
-);
-
-// =====================================
-// OpenStreetMap Layer
-// =====================================
-
-L.tileLayer(
-    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    {
-        attribution:
-        '&copy; OpenStreetMap contributors'
-    }
-).addTo(map);
-
-// =====================================
-// Icons
-// =====================================
-
-const startIcon = L.icon({
-    iconUrl:
-    'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-    iconSize:[40,40],
-    iconAnchor:[20,40]
-});
-
-const destinationIcon = L.icon({
-    iconUrl:
-    'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
-    iconSize:[40,40],
-    iconAnchor:[20,40]
-});
-
-// =====================================
-// Variables
-// =====================================
-
-let originMarker = null;
-let destinationMarker = null;
-let routingControl = null;
-let clickCount = 0;
-
-// =====================================
-// Create Route
-// =====================================
-
-function createRoute(routeType=0){
-
-    if(!originMarker || !destinationMarker){
-        return;
-    }
-
-    if(routingControl){
-        map.removeControl(
-            routingControl
-        );
-    }
-
-    const start =
-    originMarker.getLatLng();
-
-    const end =
-    destinationMarker.getLatLng();
-
-    let routeColor = "#00a884";
-
-    if(routeType === 1){
-        routeColor = "#0984e3";
-    }
-
-    if(routeType === 2){
-        routeColor = "#f39c12";
-    }
-
-    routingControl =
-    L.Routing.control({
-
-        waypoints:[
-            start,
-            end
-        ],
-
-        routeWhileDragging:false,
-
-        draggableWaypoints:false,
-
-        addWaypoints:false,
-
-        fitSelectedRoutes:true,
-
-        show:false,
-
-        createMarker:function(){
-            return null;
-        },
-
-        lineOptions:{
-            styles:[
-                {
-                    color:routeColor,
-                    opacity:0.9,
-                    weight:7
-                }
-            ]
-        }
-
-    }).addTo(map);
-}
-
-// =====================================
-// Map Click
-// =====================================
-
-map.on('click',function(e){
-
-    if(clickCount === 0){
-
-        originMarker =
-        L.marker(
-            e.latlng,
-            {icon:startIcon}
-        )
-        .addTo(map)
-        .bindPopup(
-            "Starting Point"
-        )
-        .openPopup();
-
-        clickCount++;
-
-    }
-
-    else if(clickCount === 1){
-
-        destinationMarker =
-        L.marker(
-            e.latlng,
-            {icon:destinationIcon}
-        )
-        .addTo(map)
-        .bindPopup(
-            "Destination"
-        )
-        .openPopup();
-
-        clickCount++;
-
-        createRoute(0);
-    }
-
-});
-
-// =====================================
-// Route Cards
-// =====================================
-
-document
-.querySelectorAll('.route-card')
-.forEach(card => {
-
-    card.addEventListener(
-        'click',
-        () => {
-
-            document
-            .querySelectorAll('.route-card')
-            .forEach(c =>
-                c.classList.remove(
-                    'active'
-                )
-            );
-
-            card.classList.add(
-                'active'
-            );
-
-            const routeIndex =
-            parseInt(
-                card.dataset.route
-            );
-
-            createRoute(
-                routeIndex
-            );
-
-        }
-    );
-
-});
-
-// =====================================
-// Reset
-// =====================================
-
-document
-.getElementById('resetBtn')
-.addEventListener(
-'click',
-() => {
-
-    if(originMarker){
-        map.removeLayer(
-            originMarker
-        );
-    }
-
-    if(destinationMarker){
-        map.removeLayer(
-            destinationMarker
-        );
-    }
-
-    if(routingControl){
-        map.removeControl(
-            routingControl
-        );
-    }
-
-    originMarker = null;
-    destinationMarker = null;
-    routingControl = null;
-    clickCount = 0;
-
-    map.setView(
-        [12.8797,121.7740],
-        6
-    );
-
-});
-
-</script>
+    <!-- Custom JS -->
+    <script src="script.js"></script>
 
 </body>
+
 </html>
