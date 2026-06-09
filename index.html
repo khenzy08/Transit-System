@@ -1,40 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transit Route Optimizer</title>
+<div class="app">
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <div class="sidebar">
 
-    <div class="container">
+        <h1>🚗 Transit Route Optimizer</h1>
 
-        <h1>Transit Route Optimizer</h1>
+        <label>Starting Point</label>
+        <input type="text" id="start" placeholder="Enter starting location">
 
-        <div class="form">
+        <label>Destination</label>
+        <input type="text" id="destination" placeholder="Enter destination">
 
-            <label>Starting Point</label>
-            <input type="text" id="start" placeholder="Enter starting location">
+        <label>Vehicle Type</label>
+        <select id="vehicle">
+            <option>Car</option>
+            <option>Motorcycle</option>
+        </select>
 
-            <label>Destination</label>
-            <input type="text" id="destination" placeholder="Enter destination">
-
-            <label>Vehicle Type</label>
-            <select id="vehicle">
-                <option>Car</option>
-                <option>Motorcycle</option>
-            </select>
-
-            <button onclick="findRoute()">
-                Find Best Route
-            </button>
-
-        </div>
-
-        <div id="map"></div>
+        <button onclick="findRoute()">
+            Find Best Route
+        </button>
 
         <div id="result">
             Route information will appear here.
@@ -42,8 +26,6 @@
 
     </div>
 
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="script.js"></script>
+    <div id="map"></div>
 
-</body>
-</html>
+</div>
