@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Transit Route Optimizer</title>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet/dist/leaflet.css">
 
 <link rel="stylesheet" href="style.css">
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 </head>
 
 <body>
@@ -21,57 +24,69 @@
 
         <h2>🚌 Transit Route Optimizer</h2>
 
-        <div class="instructions">
-            <strong>Instructions:</strong>
-            <br><br>
-            Click the map:
-            <br>
-            📍 First click = Starting Point
-            <br>
-            🎯 Second click = Destination
-        </div>
+        <div class="search-box">
 
-        <h3>Route Options</h3>
+            <label>Starting Location</label>
+
+            <input
+                type="text"
+                id="originInput"
+                placeholder="Search address..."
+            >
+
+            <div
+                id="originResults"
+                class="results">
+            </div>
+
+            <label>Destination</label>
+
+            <input
+                type="text"
+                id="destinationInput"
+                placeholder="Search address..."
+            >
+
+            <div
+                id="destinationResults"
+                class="results">
+            </div>
+
+        </div>
 
         <div class="route-panel">
 
-            <div class="route-card active" data-route="0">
+            <div class="route-card active"
+                 data-route="0">
 
-                <img
-                    src="https://cdn-icons-png.flaticon.com/512/744/744465.png"
-                    class="route-icon"
-                >
+                <span class="emoji">⚡</span>
 
                 <div>
-                    <h4>Fastest Route</h4>
+                    <h4>Fastest</h4>
                     <p>25 mins</p>
                 </div>
 
             </div>
 
-            <div class="route-card" data-route="1">
+            <div class="route-card"
+                 data-route="1">
 
-                <img
-                    src="https://cdn-icons-png.flaticon.com/512/3523/3523887.png"
-                    class="route-icon"
-                >
+                <span class="emoji">💰</span>
 
                 <div>
-                    <h4>Cheapest Route</h4>
+                    <h4>Cheapest</h4>
                     <p>32 mins</p>
                 </div>
 
             </div>
 
-            <div class="route-card" data-route="2">
+            <div class="route-card"
+                 data-route="2">
 
-                <img
-                    src="https://cdn-icons-png.flaticon.com/512/2972/2972185.png"
-                    class="route-icon"
-                >
+                <span class="emoji">🚌</span>
 
                 <div>
-                    <h4>Fewest Transfers</h4>
+                    <h4>Least Transfers</h4>
                     <p>28 mins</p>
                 </div>
 
@@ -79,8 +94,8 @@
 
         </div>
 
-        <button id="resetBtn">
-            Reset Route
+        <button id="clearBtn">
+            Reset
         </button>
 
     </div>
