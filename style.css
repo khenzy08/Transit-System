@@ -50,3 +50,9 @@ button:hover{
     background:#eef4ff;
     border-radius:8px;
 }
+
+#map{
+    height: 400px;
+    margin-top: 20px;
+    border-radius: 10px;
+}
