@@ -1,243 +1,596 @@
 // =====================================
-// PHILIPPINES TRANSIT ROUTE OPTIMIZER
+// TRANSIT ROUTE OPTIMIZER - PHILIPPINES
 // =====================================
 
-// Initialize map
+// MAP
+
 const map = L.map('map').setView(
-    [12.8797, 121.7740], // Philippines center
+    [12.8797, 121.7740],
     6
 );
 
-// OpenStreetMap tiles
 L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     {
-        attribution: '&copy; OpenStreetMap'
+        attribution:
+            '&copy; OpenStreetMap Contributors'
     }
 ).addTo(map);
 
-// =====================
-// Custom Icons
-// =====================
+// =====================================
+// VARIABLES
+// =====================================
+
+let routingControl = null;
+
+let startMarker = null;
+let endMarker = null;
+
+let selectedVehicle = "car";
+let selectedRoute = "fastest";
+
+let fromLocation = null;
+let toLocation = null;
+
+// =====================================
+// CUSTOM ICONS
+// =====================================
 
 const startIcon = L.icon({
     iconUrl:
-    'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-    iconSize: [40,40],
-    iconAnchor: [20,40]
+        'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40]
 });
 
 const destinationIcon = L.icon({
     iconUrl:
-    'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
-    iconSize: [40,40],
-    iconAnchor: [20,40]
+        'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40]
 });
 
-// =====================
-// Variables
-// =====================
+// =====================================
+// AUTOCOMPLETE
+// =====================================
 
-let originMarker = null;
-let destinationMarker = null;
+let debounceTimer;
 
-let clickCount = 0;
+function debounce(callback, delay) {
+    clearTimeout(debounceTimer);
 
-let routingControl = null;
+    debounceTimer = setTimeout(
+        callback,
+        delay
+    );
+}
 
-// =====================
-// Create Route
-// =====================
+async function searchPlaces(query) {
 
-function createRoute(routeType = 0){
+    if (query.length < 3) {
+        return [];
+    }
 
-    if(
-        !originMarker ||
-        !destinationMarker
-    ){
+    try {
+
+        const url =
+            `https://nominatim.openstreetmap.org/search?` +
+            `format=json&` +
+            `limit=5&` +
+            `countrycodes=ph&` +
+            `q=${encodeURIComponent(query)}`;
+
+        const response =
+            await fetch(url);
+
+        return await response.json();
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+        return [];
+    }
+}
+
+function createSuggestions(
+    results,
+    container,
+    input,
+    isFrom
+) {
+
+    container.innerHTML = '';
+
+    if (results.length === 0) {
+
+        container.style.display = 'none';
+
         return;
     }
 
-    if(routingControl){
-        map.removeControl(
-            routingControl
-        );
-    }
+    results.forEach(place => {
 
-    const start =
-        originMarker.getLatLng();
+        const item =
+            document.createElement('div');
 
-    const end =
-        destinationMarker.getLatLng();
+        item.className =
+            'suggestion-item';
 
-    let lineColor = "#00a884";
+        item.textContent =
+            place.display_name;
 
-    if(routeType === 1){
-        lineColor = "#0984e3";
-    }
+        item.addEventListener(
+            'click',
+            () => {
 
-    if(routeType === 2){
-        lineColor = "#f39c12";
-    }
+                input.value =
+                    place.display_name;
 
-    routingControl = L.Routing.control({
+                const selected = {
+                    lat:
+                        parseFloat(place.lat),
+                    lng:
+                        parseFloat(place.lon),
+                    name:
+                        place.display_name
+                };
 
-        waypoints: [
-            start,
-            end
-        ],
+                if (isFrom) {
 
-        routeWhileDragging: false,
+                    fromLocation =
+                        selected;
 
-        draggableWaypoints: false,
-
-        addWaypoints: false,
-
-        show: false,
-
-        fitSelectedRoutes: true,
-
-        lineOptions: {
-            styles: [
-                {
-                    color: lineColor,
-                    opacity: 0.9,
-                    weight: 7
                 }
-            ]
-        },
+                else {
 
-        createMarker: function(){
-            return null;
-        }
+                    toLocation =
+                        selected;
 
-    }).addTo(map);
+                }
 
+                container.style.display =
+                    'none';
+            }
+        );
+
+        container.appendChild(item);
+    });
+
+    container.style.display =
+        'block';
 }
 
-// =====================
-// Map Click Logic
-// =====================
+// =====================================
+// INPUT HANDLERS
+// =====================================
 
-map.on('click', function(e){
-
-    if(clickCount === 0){
-
-        originMarker = L.marker(
-            e.latlng,
-            {
-                icon:startIcon
-            }
-        )
-        .addTo(map)
-        .bindPopup(
-            "Starting Point"
-        )
-        .openPopup();
-
-        clickCount++;
-
-    }
-
-    else if(clickCount === 1){
-
-        destinationMarker = L.marker(
-            e.latlng,
-            {
-                icon:destinationIcon
-            }
-        )
-        .addTo(map)
-        .bindPopup(
-            "Destination"
-        )
-        .openPopup();
-
-        clickCount++;
-
-        createRoute(0);
-
-    }
-
-});
-
-// =====================
-// Route Cards
-// =====================
-
-document
-.querySelectorAll('.route-card')
-.forEach(card => {
-
-    card.addEventListener(
-        'click',
-        () => {
-
-            document
-            .querySelectorAll('.route-card')
-            .forEach(c =>
-                c.classList.remove(
-                    'active'
-                )
-            );
-
-            card.classList.add(
-                'active'
-            );
-
-            const routeIndex =
-                parseInt(
-                    card.dataset.route
-                );
-
-            createRoute(
-                routeIndex
-            );
-
-        }
+const fromInput =
+    document.getElementById(
+        'fromInput'
     );
 
-});
+const toInput =
+    document.getElementById(
+        'toInput'
+    );
 
-// =====================
-// Reset Button
-// =====================
+const fromSuggestions =
+    document.getElementById(
+        'fromSuggestions'
+    );
 
-document
-.getElementById(
-    'resetBtn'
-)
-.addEventListener(
-    'click',
+const toSuggestions =
+    document.getElementById(
+        'toSuggestions'
+    );
+
+// FROM
+
+fromInput.addEventListener(
+    'input',
     () => {
 
-        if(originMarker){
-            map.removeLayer(
-                originMarker
-            );
-        }
+        debounce(
+            async () => {
 
-        if(destinationMarker){
-            map.removeLayer(
-                destinationMarker
-            );
-        }
+                const results =
+                    await searchPlaces(
+                        fromInput.value
+                    );
 
-        if(routingControl){
-            map.removeControl(
-                routingControl
-            );
-        }
+                createSuggestions(
+                    results,
+                    fromSuggestions,
+                    fromInput,
+                    true
+                );
 
-        originMarker = null;
-        destinationMarker = null;
-
-        clickCount = 0;
-
-        map.setView(
-            [12.8797,121.7740],
-            6
+            },
+            500
         );
 
     }
 );
+
+// TO
+
+toInput.addEventListener(
+    'input',
+    () => {
+
+        debounce(
+            async () => {
+
+                const results =
+                    await searchPlaces(
+                        toInput.value
+                    );
+
+                createSuggestions(
+                    results,
+                    toSuggestions,
+                    toInput,
+                    false
+                );
+
+            },
+            500
+        );
+
+    }
+);
+
+// =====================================
+// CLOSE SUGGESTIONS
+// =====================================
+
+document.addEventListener(
+    'click',
+    (e) => {
+
+        if (
+            !fromSuggestions.contains(
+                e.target
+            ) &&
+            e.target !== fromInput
+        ) {
+
+            fromSuggestions.style.display =
+                'none';
+        }
+
+        if (
+            !toSuggestions.contains(
+                e.target
+            ) &&
+            e.target !== toInput
+        ) {
+
+            toSuggestions.style.display =
+                'none';
+        }
+
+    }
+);
+
+// =====================================
+// VEHICLE SELECTION
+// =====================================
+
+document
+    .querySelectorAll(
+        '.vehicle-card'
+    )
+    .forEach(card => {
+
+        card.addEventListener(
+            'click',
+            () => {
+
+                document
+                    .querySelectorAll(
+                        '.vehicle-card'
+                    )
+                    .forEach(c =>
+                        c.classList.remove(
+                            'active'
+                        )
+                    );
+
+                card.classList.add(
+                    'active'
+                );
+
+                selectedVehicle =
+                    card.dataset.vehicle;
+
+            }
+        );
+
+    });
+
+// =====================================
+// ROUTE SELECTION
+// =====================================
+
+document
+    .querySelectorAll(
+        '.route-card'
+    )
+    .forEach(card => {
+
+        card.addEventListener(
+            'click',
+            () => {
+
+                document
+                    .querySelectorAll(
+                        '.route-card'
+                    )
+                    .forEach(c =>
+                        c.classList.remove(
+                            'active'
+                        )
+                    );
+
+                card.classList.add(
+                    'active'
+                );
+
+                selectedRoute =
+                    card.dataset.route;
+
+            }
+        );
+
+    });
+
+// =====================================
+// ROUTE COLORS
+// =====================================
+
+function getRouteColor() {
+
+    if (
+        selectedRoute ===
+        'cheapest'
+    ) {
+
+        return '#0984e3';
+    }
+
+    return '#00a884';
+}
+
+// =====================================
+// FIND ROUTE
+// =====================================
+
+document
+    .getElementById(
+        'findRouteBtn'
+    )
+    .addEventListener(
+        'click',
+        () => {
+
+            if (
+                !fromLocation ||
+                !toLocation
+            ) {
+
+                alert(
+                    'Please select valid locations from the suggestions.'
+                );
+
+                return;
+            }
+
+            if (routingControl) {
+
+                map.removeControl(
+                    routingControl
+                );
+            }
+
+            if (startMarker) {
+
+                map.removeLayer(
+                    startMarker
+                );
+            }
+
+            if (endMarker) {
+
+                map.removeLayer(
+                    endMarker
+                );
+            }
+
+            startMarker =
+                L.marker(
+                    [
+                        fromLocation.lat,
+                        fromLocation.lng
+                    ],
+                    {
+                        icon:
+                            startIcon
+                    }
+                )
+                    .addTo(map)
+                    .bindPopup(
+                        'Starting Point'
+                    );
+
+            endMarker =
+                L.marker(
+                    [
+                        toLocation.lat,
+                        toLocation.lng
+                    ],
+                    {
+                        icon:
+                            destinationIcon
+                    }
+                )
+                    .addTo(map)
+                    .bindPopup(
+                        'Destination'
+                    );
+
+            routingControl =
+                L.Routing.control({
+
+                    waypoints: [
+
+                        L.latLng(
+                            fromLocation.lat,
+                            fromLocation.lng
+                        ),
+
+                        L.latLng(
+                            toLocation.lat,
+                            toLocation.lng
+                        )
+
+                    ],
+
+                    routeWhileDragging:
+                        false,
+
+                    addWaypoints:
+                        false,
+
+                    draggableWaypoints:
+                        false,
+
+                    show:
+                        false,
+
+                    createMarker:
+                        () => null,
+
+                    lineOptions: {
+
+                        styles: [
+
+                            {
+                                color:
+                                    getRouteColor(),
+
+                                opacity:
+                                    0.9,
+
+                                weight:
+                                    7
+                            }
+
+                        ]
+
+                    }
+
+                })
+                    .on(
+                        'routesfound',
+                        function (e) {
+
+                            const route =
+                                e.routes[0];
+
+                            const distanceKm =
+                                (
+                                    route.summary.totalDistance /
+                                    1000
+                                ).toFixed(
+                                    2
+                                );
+
+                            const timeMinutes =
+                                Math.round(
+                                    route.summary.totalTime /
+                                    60
+                                );
+
+                            document.getElementById(
+                                'distanceText'
+                            ).textContent =
+                                `${distanceKm} km`;
+
+                            document.getElementById(
+                                'timeText'
+                            ).textContent =
+                                `${timeMinutes} min`;
+
+                        }
+                    )
+                    .addTo(map);
+
+        }
+    );
+
+// =====================================
+// RESET
+// =====================================
+
+document
+    .getElementById(
+        'resetBtn'
+    )
+    .addEventListener(
+        'click',
+        () => {
+
+            if (routingControl) {
+
+                map.removeControl(
+                    routingControl
+                );
+
+                routingControl =
+                    null;
+            }
+
+            if (startMarker) {
+
+                map.removeLayer(
+                    startMarker
+                );
+
+                startMarker =
+                    null;
+            }
+
+            if (endMarker) {
+
+                map.removeLayer(
+                    endMarker
+                );
+
+                endMarker =
+                    null;
+            }
+
+            fromInput.value = '';
+            toInput.value = '';
+
+            fromLocation = null;
+            toLocation = null;
+
+            document.getElementById(
+                'distanceText'
+            ).textContent = '--';
+
+            document.getElementById(
+                'timeText'
+            ).textContent = '--';
+
+            map.setView(
+                [12.8797, 121.7740],
+                6
+            );
+
+        }
+    );
