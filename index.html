@@ -1,1 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transit Route Optimizer</title>
 
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>Transit Route Optimizer</h1>
+
+        <div class="form">
+
+            <label>Starting Point</label>
+            <input type="text" id="start" placeholder="Enter starting location">
+
+            <label>Destination</label>
+            <input type="text" id="destination" placeholder="Enter destination">
+
+            <label>Vehicle Type</label>
+            <select id="vehicle">
+                <option>Car</option>
+                <option>Motorcycle</option>
+            </select>
+
+            <button onclick="findRoute()">
+                Find Best Route
+            </button>
+
+        </div>
+
+        <div id="result">
+            Route information will appear here.
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
