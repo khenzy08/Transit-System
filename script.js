@@ -4,7 +4,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
 attribution:'© OpenStreetMap'
 }).addTo(map);
 
-// DATA
+// STATE
 let origin = null;
 let destination = null;
 let pickup = null;
@@ -27,28 +27,23 @@ iconUrl:'https://cdn-icons-png.flaticon.com/512/2776/2776067.png',
 iconSize:[35,35]
 });
 
-
-// 🇵🇭 FIXED SEARCH (PH ONLY + BIASED)
+// FIXED SEARCH (Philippines-focused but stable)
 async function search(q){
 
 if(q.length < 2) return [];
 
-// bias around Philippines
 const res = await fetch(
 `https://nominatim.openstreetmap.org/search?` +
-`format=json&` +
-`q=${encodeURIComponent(q)}` +
-`&limit=5` +
-`&viewbox=120.5,14.2,121.5,15.2` +
-`&bounded=1`
+`format=json&limit=5&q=${encodeURIComponent(q)}`
 );
 
 return await res.json();
 }
 
+// SHOW RESULTS (FIXED DOM ACCESS)
+function showResults(data, containerId, type){
 
-// SHOW RESULTS
-function showResults(data, container, type){
+const container = document.getElementById(containerId);
 
 container.innerHTML = '';
 
@@ -65,7 +60,6 @@ container.appendChild(div);
 });
 
 }
-
 
 // SELECT LOCATION
 function selectLocation(item,type){
@@ -99,8 +93,7 @@ drawRoute(0);
 
 }
 
-
-// PICKUP POINTS
+// PICKUP OPTIONS
 function generatePickup(lat,lon){
 
 pickupMarkers.forEach(m=>map.removeLayer(m));
@@ -152,7 +145,6 @@ box.appendChild(div);
 
 }
 
-
 // ROUTES
 function createRoutes(){
 
@@ -185,11 +177,14 @@ routes = [
 
 }
 
-
-// DRAW ROUTE
+// DRAW ROUTE (FIXED SAFE CHECK)
 function drawRoute(i){
 
-if(routeLayer) map.removeLayer(routeLayer);
+if(!routes.length) return;
+
+if(routeLayer){
+map.removeLayer(routeLayer);
+}
 
 const colors = ["#00a884","#2196f3","#ff9800"];
 
@@ -198,17 +193,23 @@ color:colors[i],
 weight:5
 }).addTo(map);
 
-map.fitBounds(routeLayer.getBounds());
+map.fitBounds(routeLayer.getBounds(),{
+padding:[40,40]
+});
 
 }
 
-
-// INPUT EVENTS
+// INPUT EVENTS (FIXED IDS)
 document.getElementById("originInput")
 .addEventListener("input",async function(){
 
 const data = await search(this.value);
-showResults(data,originResults,'origin');
+
+showResults(
+data,
+"originResults",
+"origin"
+);
 
 });
 
@@ -216,10 +217,14 @@ document.getElementById("destinationInput")
 .addEventListener("input",async function(){
 
 const data = await search(this.value);
-showResults(data,destinationResults,'destination');
+
+showResults(
+data,
+"destinationResults",
+"destination"
+);
 
 });
-
 
 // ROUTE SWITCH
 document.querySelectorAll(".route-card")
@@ -228,7 +233,6 @@ document.querySelectorAll(".route-card")
 c.onclick = ()=>drawRoute(i);
 
 });
-
 
 // RESET
 document.getElementById("resetBtn")
