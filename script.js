@@ -217,6 +217,36 @@ const deselectMapPickBtn =
         'deselectMapPickBtn'
     );
 
+const toggleControlsBtn =
+    document.getElementById(
+        'toggleControlsBtn'
+    );
+
+const sidebar =
+    document.querySelector(
+        '.sidebar'
+    );
+
+toggleControlsBtn.addEventListener(
+    'click',
+    () => {
+        const isCollapsed =
+            sidebar.classList.toggle(
+                'controls-collapsed'
+            );
+
+        toggleControlsBtn.textContent =
+            isCollapsed
+                ? 'Show options'
+                : 'Hide options';
+
+        setTimeout(
+            () => map.invalidateSize(),
+            250
+        );
+    }
+);
+
 function formatPickedLocation(latlng) {
     return `${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`;
 }
@@ -849,6 +879,13 @@ function getAdjustedRouteDuration(route) {
         return getDistanceBasedDuration(route, 5);
     }
 
+    if (
+        selectedVehicle === 'motorcycle' &&
+        motorcycleCc === 'over400'
+    ) {
+        return route.duration * 0.72;
+    }
+
     if (currentDurationStrategy === 'profileActual') {
         return route.duration;
     }
@@ -1314,6 +1351,71 @@ async function fetchRoutesValhalla(from, to, costing, costingOptions = {}, extra
     });
 }
 
+async function fetchRoutesSafely(requests) {
+    const routes = [];
+
+    for (const request of requests) {
+        try {
+            const result =
+                await request();
+
+            routes.push(...result);
+        }
+        catch (error) {
+            console.warn(
+                'Route source failed, trying fallback.',
+                error
+            );
+        }
+    }
+
+    return routes;
+}
+
+async function fetchServiceRoadFallbackRoutes(from, to) {
+    currentRouteNote +=
+        ' Long-distance fallback used service-road-preferred road geometry and removed configured pay-toll routes when detected.';
+
+    const routes =
+        await fetchRoutesSafely([
+            () => fetchRoutesValhalla(
+                from,
+                to,
+                'auto',
+                {
+                    auto: {
+                        use_highways: 0,
+                        use_tolls: 0
+                    }
+                },
+                {
+                    alternates: 1
+                }
+            ),
+            () => fetchRoutesOSRM(
+                from,
+                to,
+                'driving'
+            )
+        ]);
+
+    return filterRestrictedRoutes(routes);
+}
+
+async function classifyWithFallback(routes, from, to) {
+    const classifiedRoutes =
+        classifyRoutesWithStandardAlternative(routes);
+
+    if (classifiedRoutes.length > 0) {
+        return classifiedRoutes;
+    }
+
+    const fallbackRoutes =
+        await fetchServiceRoadFallbackRoutes(from, to);
+
+    return classifyRoutesWithStandardAlternative(fallbackRoutes);
+}
+
 async function fetchRoutesForSelectedVehicle(from, to) {
     const profile =
         getProfileForVehicle(selectedVehicle);
@@ -1330,7 +1432,7 @@ async function fetchRoutesForSelectedVehicle(from, to) {
         currentRouteNote =
             selectedVehicle === 'car'
                 ? 'Routes are compared by ETA. Configured pay-toll roads count as fastest only when they are actually quicker; EDSA is treated as a standard highway.'
-                : '400cc+ motorcycle routes are compared by ETA. Configured pay-toll roads count as fastest only when they are actually quicker; EDSA is treated as a standard highway.';
+                : '400cc+ motorcycle routes apply a lane-filtering ETA advantage, then compare routes by ETA. Configured pay-toll roads count as fastest only when they are actually quicker; EDSA is treated as a standard highway.';
 
         try {
             const [tollRoutes, standardRoutes] =
@@ -1406,9 +1508,9 @@ async function fetchRoutesForSelectedVehicle(from, to) {
         currentRouteNote =
             'Under 400cc motorcycle route can use regular highways like EDSA, avoids configured pay-toll roads, and estimates time from distance.';
 
-        const [fastRoutes, standardRoutes] =
-            await Promise.all([
-                fetchRoutesValhalla(
+        const routes =
+            await fetchRoutesSafely([
+                () => fetchRoutesValhalla(
                     from,
                     to,
                     'motor_scooter',
@@ -1422,7 +1524,7 @@ async function fetchRoutesForSelectedVehicle(from, to) {
                         alternates: 1
                     }
                 ),
-                fetchRoutesValhalla(
+                () => fetchRoutesValhalla(
                     from,
                     to,
                     'motor_scooter',
@@ -1438,11 +1540,10 @@ async function fetchRoutesForSelectedVehicle(from, to) {
                 )
             ]);
 
-        return classifyRoutesWithStandardAlternative(
-            [
-                ...fastRoutes,
-                ...standardRoutes
-            ]
+        return classifyWithFallback(
+            routes,
+            from,
+            to
         );
     }
 
@@ -1451,9 +1552,9 @@ async function fetchRoutesForSelectedVehicle(from, to) {
         currentRouteNote =
             'Bicycle route can use regular highways where allowed, avoids configured pay-toll roads, and estimates time from distance.';
 
-        const [fastRoutes, standardRoutes, osrmRoutes] =
-            await Promise.all([
-                fetchRoutesValhalla(
+        const routes =
+            await fetchRoutesSafely([
+                () => fetchRoutesValhalla(
                     from,
                     to,
                     'bicycle',
@@ -1467,7 +1568,7 @@ async function fetchRoutesForSelectedVehicle(from, to) {
                         alternates: 1
                     }
                 ),
-                fetchRoutesValhalla(
+                () => fetchRoutesValhalla(
                     from,
                     to,
                     'bicycle',
@@ -1481,19 +1582,17 @@ async function fetchRoutesForSelectedVehicle(from, to) {
                         alternates: 1
                     }
                 ),
-                fetchRoutesOSRM(
+                () => fetchRoutesOSRM(
                     from,
                     to,
                     'bike'
                 )
             ]);
 
-        return classifyRoutesWithStandardAlternative(
-            [
-                ...fastRoutes,
-                ...standardRoutes,
-                ...osrmRoutes
-            ]
+        return classifyWithFallback(
+            routes,
+            from,
+            to
         );
     }
 
@@ -1502,9 +1601,9 @@ async function fetchRoutesForSelectedVehicle(from, to) {
         currentRouteNote =
             'Walking route can use regular highways where pedestrian access is allowed, avoids configured pay-toll roads, and estimates time from distance.';
 
-        const [valhallaRoutes, osrmRoutes] =
-            await Promise.all([
-                fetchRoutesValhalla(
+        const routes =
+            await fetchRoutesSafely([
+                () => fetchRoutesValhalla(
                     from,
                     to,
                     'pedestrian',
@@ -1513,18 +1612,17 @@ async function fetchRoutesForSelectedVehicle(from, to) {
                         alternates: 2
                     }
                 ),
-                fetchRoutesOSRM(
+                () => fetchRoutesOSRM(
                     from,
                     to,
                     'foot'
                 )
             ]);
 
-        return classifyRoutesWithStandardAlternative(
-            [
-                ...valhallaRoutes,
-                ...osrmRoutes
-            ]
+        return classifyWithFallback(
+            routes,
+            from,
+            to
         );
     }
 

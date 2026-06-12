@@ -41,6 +41,49 @@ body{
 
 }
 
+.sidebar.controls-collapsed{
+    width:170px;
+    min-width:170px;
+    padding:18px;
+}
+
+.sidebar.controls-collapsed .sidebar-controls{
+    display:none;
+}
+
+.sidebar.controls-collapsed .logo-section{
+    margin-bottom:14px;
+}
+
+.sidebar.controls-collapsed .logo-section h2{
+    font-size:1.1rem;
+    line-height:1.25;
+}
+
+.sidebar.controls-collapsed .subtitle{
+    display:none;
+}
+
+.controls-toggle-btn{
+    width:100%;
+    margin-bottom:16px;
+    padding:11px 12px;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+    background:#ffffff;
+    color:#334155;
+    font-size:13px;
+    font-weight:800;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.controls-toggle-btn:hover{
+    border-color:#0284c7;
+    background:rgba(14,165,233,0.1);
+    color:#075985;
+}
+
 #map{
     flex:1;
     height:100vh;
