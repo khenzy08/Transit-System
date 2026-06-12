@@ -78,29 +78,46 @@
             </div>
 
             <div class="map-pick-section">
-                <div class="map-pick-header">
+                <button
+                    type="button"
+                    id="toggleMapPickBtn"
+                    class="map-pick-toggle">
                     Pick from map
-                </div>
+                </button>
 
-                <div class="map-pick-buttons">
+                <div
+                    id="mapPickPanel"
+                    class="map-pick-panel"
+                    style="display:none">
+
+                    <div class="map-pick-buttons">
+                        <button
+                            type="button"
+                            id="pickFromBtn"
+                            class="map-pick-btn active">
+                            Set From
+                        </button>
+
+                        <button
+                            type="button"
+                            id="pickToBtn"
+                            class="map-pick-btn">
+                            Set To
+                        </button>
+                    </div>
+
+                    <p id="mapPickStatus" class="map-pick-status">
+                        Click the map to set your starting point.
+                    </p>
+
                     <button
                         type="button"
-                        id="pickFromBtn"
-                        class="map-pick-btn active">
-                        Set From
+                        id="deselectMapPickBtn"
+                        class="map-pick-off-btn">
+                        Deselect map picking
                     </button>
 
-                    <button
-                        type="button"
-                        id="pickToBtn"
-                        class="map-pick-btn">
-                        Set To
-                    </button>
                 </div>
-
-                <p id="mapPickStatus" class="map-pick-status">
-                    Click the map to set your starting point.
-                </p>
             </div>
 
             <!-- VEHICLE SELECTION -->
@@ -138,6 +155,37 @@
                         <p>Two-Wheel Travel</p>
                     </div>
 
+                </div>
+
+                <div
+                    id="motorcycleOptions"
+                    class="motorcycle-options"
+                    style="display:none">
+
+                    <div class="engine-option-label">
+                        Motorcycle engine size
+                    </div>
+
+                    <label class="engine-option active">
+                        <input
+                            type="radio"
+                            name="motorcycleCc"
+                            value="under400"
+                            checked>
+                        <span>Under 400cc</span>
+                    </label>
+
+                    <label class="engine-option">
+                        <input
+                            type="radio"
+                            name="motorcycleCc"
+                            value="over400">
+                        <span>400cc and above</span>
+                    </label>
+
+                    <p class="engine-option-note">
+                        Under 400cc can use regular highways, but avoids SLEX, Skyway, STAR Tollway, TPLEX, NAIAX, and MCX.
+                    </p>
                 </div>
 
                 <div
@@ -209,6 +257,12 @@
 
                 </div>
 
+                <div
+                    id="standardAlternates"
+                    class="standard-alternates"
+                    style="display:none">
+                </div>
+
             </div>
 
             <!-- ROUTE INFO -->
@@ -254,6 +308,14 @@
                     class="secondary-btn">
 
                     Reset Route
+
+                </button>
+
+                <button
+                    id="deselectRouteBtn"
+                    class="utility-btn">
+
+                    Deselect Route
 
                 </button>
 

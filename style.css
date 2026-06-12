@@ -150,11 +150,28 @@ body{
     border-radius:12px;
 }
 
-.map-pick-header{
-    margin-bottom:10px;
+.map-pick-toggle{
+    width:100%;
+    padding:12px;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+    background:#fff;
     color:#374151;
-    font-size:14px;
+    font-size:13px;
     font-weight:700;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.map-pick-toggle:hover,
+.map-pick-toggle.active{
+    border-color:#0284c7;
+    background:rgba(14,165,233,0.1);
+    color:#075985;
+}
+
+.map-pick-panel{
+    margin-top:10px;
 }
 
 .map-pick-buttons{
@@ -190,6 +207,25 @@ body{
     color:#475569;
     font-size:12px;
     line-height:1.5;
+}
+
+.map-pick-off-btn{
+    width:100%;
+    margin-top:10px;
+    padding:10px 12px;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+    background:#f8fafc;
+    color:#334155;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.map-pick-off-btn:hover{
+    border-color:#64748b;
+    background:#e2e8f0;
 }
 
 /* =====================================
@@ -252,6 +288,52 @@ body{
     color:#6b7280;
 }
 
+.motorcycle-options{
+    margin-top:-4px;
+    padding:12px;
+    background:rgba(255,255,255,0.78);
+    border:1px solid rgba(15,23,42,0.1);
+    border-radius:12px;
+}
+
+.engine-option-label{
+    margin-bottom:8px;
+    color:#374151;
+    font-size:13px;
+    font-weight:700;
+}
+
+.engine-option{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:8px;
+    padding:10px;
+    background:#fff;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+    color:#111827;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.engine-option.active{
+    border-color:#0284c7;
+    background:rgba(14,165,233,0.1);
+    color:#075985;
+}
+
+.engine-option input{
+    accent-color:#0284c7;
+}
+
+.engine-option-note{
+    color:#64748b;
+    font-size:12px;
+    line-height:1.5;
+}
+
 /* =====================================
    ROUTE CARDS
 ===================================== */
@@ -295,6 +377,46 @@ body{
 .route-card p{
     color:#6b7280;
     font-size:13px;
+}
+
+.standard-alternates{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-top:-4px;
+    padding:10px;
+    background:rgba(255,255,255,0.76);
+    border:1px solid rgba(15,23,42,0.1);
+    border-radius:12px;
+}
+
+.standard-alt-btn{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+    background:#ffffff;
+    color:#334155;
+    font-size:13px;
+    font-weight:700;
+    text-align:left;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.standard-alt-btn:hover,
+.standard-alt-btn.active{
+    border-color:#0284c7;
+    background:rgba(14,165,233,0.1);
+    color:#075985;
+}
+
+.standard-alt-btn span{
+    display:block;
+    margin-top:3px;
+    color:#64748b;
+    font-size:12px;
+    font-weight:600;
 }
 
 /* =====================================
@@ -380,6 +502,24 @@ body{
 .secondary-btn:hover{
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(209, 213, 219, 0.7);
+}
+
+.utility-btn{
+    width:100%;
+    padding:14px;
+    border:1px solid #cbd5e1;
+    border-radius:14px;
+    background:#ffffff;
+    color:#334155;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.utility-btn:hover{
+    border-color:#64748b;
+    background:#f1f5f9;
 }
 
 /* MESSAGES & LOADING */
