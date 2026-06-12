@@ -227,6 +227,11 @@ const sidebar =
         '.sidebar'
     );
 
+const appContainer =
+    document.querySelector(
+        '.container'
+    );
+
 toggleControlsBtn.addEventListener(
     'click',
     () => {
@@ -234,6 +239,11 @@ toggleControlsBtn.addEventListener(
             sidebar.classList.toggle(
                 'controls-collapsed'
             );
+
+        appContainer.classList.toggle(
+            'controls-collapsed',
+            isCollapsed
+        );
 
         toggleControlsBtn.textContent =
             isCollapsed

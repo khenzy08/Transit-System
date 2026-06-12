@@ -665,6 +665,28 @@ body{
         height:calc(100vh - 420px);
     }
 
+    .sidebar.controls-collapsed{
+        width:100%;
+        min-width:100%;
+        height:190px;
+        min-height:190px;
+        padding:16px;
+        overflow:hidden;
+    }
+
+    .sidebar.controls-collapsed .logo-section{
+        margin-bottom:12px;
+    }
+
+    .sidebar.controls-collapsed .logo-section h2{
+        font-size:1.35rem;
+        line-height:1.2;
+    }
+
+    .container.controls-collapsed #map{
+        height:calc(100dvh - 190px);
+    }
+
 }
 
 @media(max-width:600px){
@@ -681,6 +703,15 @@ body{
     .vehicle-icon,
     .route-icon{
         font-size:22px;
+    }
+
+    .sidebar.controls-collapsed{
+        height:170px;
+        min-height:170px;
+    }
+
+    .container.controls-collapsed #map{
+        height:calc(100dvh - 170px);
     }
 
 }
