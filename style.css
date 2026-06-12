@@ -138,6 +138,61 @@ body{
 }
 
 /* =====================================
+   MAP PICKER
+===================================== */
+
+.map-pick-section{
+    margin-top:-10px;
+    margin-bottom:24px;
+    padding:12px;
+    background:rgba(255,255,255,0.72);
+    border:1px solid rgba(15,23,42,0.1);
+    border-radius:12px;
+}
+
+.map-pick-header{
+    margin-bottom:10px;
+    color:#374151;
+    font-size:14px;
+    font-weight:700;
+}
+
+.map-pick-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+
+.map-pick-btn{
+    padding:10px 12px;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+    background:#fff;
+    color:#111827;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.map-pick-btn:hover{
+    border-color:#0284c7;
+}
+
+.map-pick-btn.active{
+    border-color:#0284c7;
+    background:rgba(14,165,233,0.1);
+    color:#075985;
+}
+
+.map-pick-status{
+    margin-top:10px;
+    color:#475569;
+    font-size:12px;
+    line-height:1.5;
+}
+
+/* =====================================
    SECTION TITLES
 ===================================== */
 

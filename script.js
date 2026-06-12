@@ -31,6 +31,7 @@ let selectedRoute = "fastest";
 
 let fromLocation = null;
 let toLocation = null;
+let mapPickTarget = 'from';
 
 // =====================================
 // CUSTOM ICONS
@@ -137,18 +138,11 @@ function createSuggestions(
                         place.display_name
                 };
 
-                if (isFrom) {
-
-                    fromLocation =
-                        selected;
-
-                }
-                else {
-
-                    toLocation =
-                        selected;
-
-                }
+                setSelectedLocation(
+                    isFrom,
+                    selected,
+                    true
+                );
 
                 container.style.display =
                     'none';
@@ -186,11 +180,205 @@ const toSuggestions =
         'toSuggestions'
     );
 
+const pickFromBtn =
+    document.getElementById(
+        'pickFromBtn'
+    );
+
+const pickToBtn =
+    document.getElementById(
+        'pickToBtn'
+    );
+
+const mapPickStatus =
+    document.getElementById(
+        'mapPickStatus'
+    );
+
+function formatPickedLocation(latlng) {
+    return `${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`;
+}
+
+function setMapPickTarget(target) {
+    mapPickTarget = target;
+
+    pickFromBtn.classList.toggle(
+        'active',
+        target === 'from'
+    );
+
+    pickToBtn.classList.toggle(
+        'active',
+        target === 'to'
+    );
+
+    mapPickStatus.textContent =
+        target === 'from'
+            ? 'Click the map to set your starting point.'
+            : 'Click the map to set your destination.';
+}
+
+function setLocationMarker(isFrom, location) {
+    const markerPosition =
+        [location.lat, location.lng];
+
+    if (isFrom) {
+        if (startMarker) {
+            map.removeLayer(startMarker);
+        }
+
+        startMarker = L.marker(
+            markerPosition,
+            { icon: startIcon }
+        )
+            .addTo(map)
+            .bindPopup('Starting Point');
+
+        map.panTo(markerPosition);
+
+        return;
+    }
+
+    if (endMarker) {
+        map.removeLayer(endMarker);
+    }
+
+    endMarker = L.marker(
+        markerPosition,
+        { icon: destinationIcon }
+    )
+        .addTo(map)
+        .bindPopup('Destination');
+
+    map.panTo(markerPosition);
+}
+
+function setSelectedLocation(isFrom, location, shouldPlaceMarker = false) {
+    if (isFrom) {
+        fromLocation = location;
+        fromInput.value = location.name;
+    }
+    else {
+        toLocation = location;
+        toInput.value = location.name;
+    }
+
+    if (shouldPlaceMarker) {
+        setLocationMarker(
+            isFrom,
+            location
+        );
+    }
+
+    clearRouteLayers();
+    currentRoutes = [];
+
+    document.getElementById(
+        'distanceText'
+    ).textContent = '--';
+
+    document.getElementById(
+        'timeText'
+    ).textContent = '--';
+}
+
+async function reverseGeocode(latlng) {
+    try {
+        const url =
+            `https://nominatim.openstreetmap.org/reverse?` +
+            `format=json&` +
+            `lat=${encodeURIComponent(latlng.lat)}&` +
+            `lon=${encodeURIComponent(latlng.lng)}`;
+
+        const response =
+            await fetch(url);
+
+        const place =
+            await response.json();
+
+        return place.display_name ||
+            formatPickedLocation(latlng);
+    }
+    catch (error) {
+        console.error(error);
+
+        return formatPickedLocation(latlng);
+    }
+}
+
+async function selectLocationFromMap(latlng) {
+    const isFrom =
+        mapPickTarget === 'from';
+
+    const pickedLocation = {
+        lat:
+            latlng.lat,
+        lng:
+            latlng.lng,
+        name:
+            formatPickedLocation(latlng)
+    };
+
+    setSelectedLocation(
+        isFrom,
+        pickedLocation,
+        true
+    );
+
+    const displayName =
+        await reverseGeocode(latlng);
+
+    pickedLocation.name =
+        displayName;
+
+    setSelectedLocation(
+        isFrom,
+        pickedLocation
+    );
+
+    if (isFrom && !toLocation) {
+        setMapPickTarget('to');
+    }
+}
+
+pickFromBtn.addEventListener(
+    'click',
+    () => setMapPickTarget('from')
+);
+
+pickToBtn.addEventListener(
+    'click',
+    () => setMapPickTarget('to')
+);
+
+fromInput.addEventListener(
+    'focus',
+    () => setMapPickTarget('from')
+);
+
+toInput.addEventListener(
+    'focus',
+    () => setMapPickTarget('to')
+);
+
+map.on(
+    'click',
+    (event) => {
+        selectLocationFromMap(event.latlng);
+    }
+);
+
 // FROM
 
 fromInput.addEventListener(
     'input',
     () => {
+        fromLocation = null;
+
+        if (startMarker) {
+            map.removeLayer(startMarker);
+            startMarker = null;
+        }
 
         debounce(
             async () => {
@@ -219,6 +407,12 @@ fromInput.addEventListener(
 toInput.addEventListener(
     'input',
     () => {
+        toLocation = null;
+
+        if (endMarker) {
+            map.removeLayer(endMarker);
+            endMarker = null;
+        }
 
         debounce(
             async () => {
@@ -476,7 +670,7 @@ document
     .addEventListener('click',
         async () => {
             if (!fromLocation || !toLocation) {
-                showAlert('Please select valid locations from the suggestions.');
+                showAlert('Please select a starting point and destination from the map or suggestions.');
                 return;
             }
 
@@ -564,6 +758,10 @@ document
 
             fromLocation = null;
             toLocation = null;
+
+            clearRouteLayers();
+            currentRoutes = [];
+            setMapPickTarget('from');
 
             document.getElementById(
                 'distanceText'
